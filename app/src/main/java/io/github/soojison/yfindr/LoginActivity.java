@@ -27,8 +27,6 @@ import butterknife.OnClick;
 
 public class LoginActivity extends AppCompatActivity {
 
-    // TODO: graceful error handling: not just toast
-
     @BindView(R.id.etEmail)
     EditText etEmail;
 

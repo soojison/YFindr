@@ -1,12 +1,13 @@
 <resources>
     <string name="app_name">YFindr</string>
     <string name="ait">AIT</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">YFindr</string>
+    <string name="title_activity_add">Add a new pin</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
 
     <string name="error_invalid_email">The email format is not correct</string>
 </resources>

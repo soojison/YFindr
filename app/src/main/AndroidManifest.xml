@@ -3,7 +3,7 @@
     package="io.github.soojison.yfindr">
 
     <!-- allow network communication -->
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -23,13 +23,17 @@
         </activity>
         <activity
             android:name=".IntroActivity"
-            android:theme="@style/Theme.Intro" />
+            android:theme="@style/AppTheme.Intro.TextColor" />
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
+            android:theme="@style/MainTheme" />
+        <activity
+            android:name=".LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".AddActivity"
+            android:theme="@style/MainTheme"/>
+
     </application>
 
 </manifest>
