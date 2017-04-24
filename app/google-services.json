@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "763417397050",
+    "firebase_url": "https://yfindr.firebaseio.com",
+    "project_id": "yfindr",
+    "storage_bucket": "yfindr.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:763417397050:android:4edb0fef06e14902",
+        "android_client_info": {
+          "package_name": "io.github.soojison.yfindr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "763417397050-6h36qn6aeeic7nsk33lv9gsadk744p81.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.github.soojison.yfindr",
+            "certificate_hash": "bfdffbe0226a51977fb5df46f204f91b50211584"
+          }
+        },
+        {
+          "client_id": "763417397050-4iai8o1nq92j7r931g5lrhmul0ge714n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVdQzDRuffLQ7-tes2pv33_vs42Sk6ey4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "763417397050-4iai8o1nq92j7r931g5lrhmul0ge714n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
