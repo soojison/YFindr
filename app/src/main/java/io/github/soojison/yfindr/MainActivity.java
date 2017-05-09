@@ -1,5 +1,6 @@
 package io.github.soojison.yfindr;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_search) {
             return true;
         } else if (id == R.id.action_add) {
-            return true;
+            startActivity(new Intent(this, AddActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

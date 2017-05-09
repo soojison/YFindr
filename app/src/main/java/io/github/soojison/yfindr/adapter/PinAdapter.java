@@ -54,8 +54,7 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder> {
         final Pin newPin = pinList.get(position);
         holder.tvNetworkName.setText(newPin.getNetworkName());
         holder.tvAddress.setText(newPin.getAddress());
-        holder.tvReview.setText(newPin.getRating() + "/5");
-
+        holder.tvReview.setText(newPin.getRating() + "/5.0");
         // TODO: Delete your own pins
     }
 
