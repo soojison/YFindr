@@ -6,18 +6,11 @@
 
     <include layout="@layout/toolbar_layout"/>
 
-    <FrameLayout
-        android:id="@+id/fragmentContainer"
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/bottomBar" />
+        android:id="@+id/recyclerViewPins">
 
-
-    <com.roughike.bottombar.BottomBar
-        android:id="@+id/bottomBar"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        app:bb_tabXmlResource="@xml/bottom_bar_nav"/>
+    </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>

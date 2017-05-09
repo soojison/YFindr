@@ -1,30 +1,59 @@
 package io.github.soojison.yfindr;
 
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.ncapdevi.fragnav.FragNavController;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import io.github.soojison.yfindr.adapter.PinAdapter;
+import io.github.soojison.yfindr.data.Pin;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    public static final String KEY_PIN = "pins";
+    private PinAdapter pinAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,35 +69,47 @@ public class MainActivity extends AppCompatActivity
         TextView tvUsername = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvUsername);
         tvUsername.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 
-        BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
-        bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
-            @Override
-            public void onTabSelected(@IdRes int tabId) {
-                if (tabId == R.id.tab_map) {
-                    // The tab with id R.id.tab_favorites was selected,
-                    // change your content accordingly.
-                } else if (tabId == R.id.tab_near_me) {
+        pinAdapter = new PinAdapter(getApplicationContext(),
+                FirebaseAuth.getInstance().getCurrentUser().getUid());
+        RecyclerView recyclerViewPins = (RecyclerView) findViewById(R.id.recyclerViewPins);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
+        recyclerViewPins.setLayoutManager(layoutManager);
+        recyclerViewPins.setAdapter(pinAdapter);
 
-                } else if (tabId == R.id.tab_emergency) {
-                    Toast.makeText(MainActivity.this, "It is an emergency! Navigate me to the nearest place",
-                            Toast.LENGTH_SHORT).show();
-                }
+        initPinListener();
+    }
+
+    private void initPinListener() {
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference(KEY_PIN);
+        dbRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Pin newPin = dataSnapshot.getValue(Pin.class);
+                pinAdapter.addPin(newPin, dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
-
-        SupportMapFragment supportMapFragment =  SupportMapFragment.newInstance();
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,
-                supportMapFragment).commit();
-        supportMapFragment.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                googleMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(37.7750, 122.4183))
-                        .title("San Francisco")
-                        .snippet("Population: 776733"));
-            }
-        });
-
     }
 
     @NonNull
@@ -87,9 +128,9 @@ public class MainActivity extends AppCompatActivity
     private Toolbar initializeToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if(getSupportActionBar() != null) {
-          getSupportActionBar().setTitle(R.string.app_name);
-          getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.app_name);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         return toolbar;
     }
@@ -100,6 +141,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            FirebaseAuth.getInstance().signOut();
             super.onBackPressed();
         }
     }
@@ -121,7 +163,7 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_search) {
             return true;
-        } else if(id == R.id.action_add) {
+        } else if (id == R.id.action_add) {
             return true;
         }
 
