@@ -3,6 +3,7 @@ package io.github.soojison.yfindr;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -28,10 +29,10 @@ import butterknife.OnClick;
 public class LoginActivity extends AppCompatActivity {
 
     @BindView(R.id.etEmail)
-    EditText etEmail;
+    TextInputEditText etEmail;
 
     @BindView(R.id.etPassword)
-    EditText etPassword;
+    TextInputEditText etPassword;
 
     ProgressDialog progressDialog;
     FirebaseAuth firebaseAuth;
