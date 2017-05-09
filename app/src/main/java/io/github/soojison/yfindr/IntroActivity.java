@@ -44,7 +44,7 @@ public class IntroActivity extends MaterialIntroActivity {
                 .backgroundColor(R.color.colorPrimary)
                 .buttonsColor(R.color.colorAccent)
                 .image(R.drawable.hand)
-                .title("At the tip of your hands")
+                .title("At the tip of your fingers")
                 .description("Would you join us?")
                 .build());
     }

@@ -34,6 +34,8 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.1'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    compile 'com.google.android.gms:play-services-maps:9.6.1'
+    compile 'com.roughike:bottom-bar:2.3.1'
 }
 
 

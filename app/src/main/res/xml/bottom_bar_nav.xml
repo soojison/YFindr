@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs xmlns:android="http://schemas.android.com/apk/res/android">
+    <tab
+        icon="@drawable/ic_map"
+        id="@+id/tab_map"
+        title="Map" />
+    <tab
+        icon="@drawable/ic_near_me"
+        id="@+id/tab_near_me"
+        title="Near Me" />
+    <tab
+        icon="@drawable/ic_sentiment_very_dissatisfied"
+        id="@+id/tab_emergency"
+        title="Emergency" />
+</tabs>
