@@ -2,6 +2,7 @@ package io.github.soojison.yfindr.fragment;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Criteria;
@@ -14,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.os.ResultReceiver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +49,10 @@ import java.util.List;
 import io.github.soojison.yfindr.MainActivity;
 import io.github.soojison.yfindr.MyLocationManager;
 import io.github.soojison.yfindr.R;
+import io.github.soojison.yfindr.data.MyLatLng;
 import io.github.soojison.yfindr.data.Pin;
+import io.github.soojison.yfindr.geocoder.Constants;
+import io.github.soojison.yfindr.geocoder.FetchAddressIntentService;
 
 public class MyMapFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     public static final String TAG = "MyMapFragment";
@@ -61,6 +66,7 @@ public class MyMapFragment extends Fragment implements GoogleApiClient.Connectio
     private GoogleApiClient mGoogleApiClient;
     private Location mCurrentLocation;
     private String mLastUpdateTime;
+    private ResultReceiver mResultReceiver;
 
 
     @Nullable
@@ -93,11 +99,6 @@ public class MyMapFragment extends Fragment implements GoogleApiClient.Connectio
                 for (int i = 0; i < markerList.size(); i++) {
                     googleMap.addMarker(markerList.get(i));
                 }
-                /* TODO: these are temp placeholders before i figure out async stuff
-                googleMap.addMarker(new MarkerOptions().title("TP_LINK")
-                        .position(new LatLng(47.499439, 19.067459)).snippet("See Details"));
-                googleMap.addMarker(new MarkerOptions().title("AIT-STUDENTS")
-                        .position(new LatLng(47.561223, 19.054964)).snippet("See Details")); */
 
                 setUpMaps(googleMap);
 
@@ -120,7 +121,6 @@ public class MyMapFragment extends Fragment implements GoogleApiClient.Connectio
                 LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
 
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 15));
-                googleMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
 
 
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -167,9 +167,10 @@ public class MyMapFragment extends Fragment implements GoogleApiClient.Connectio
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Pin newPin = dataSnapshot.getValue(Pin.class);
-                LatLng latLng = getLocationFromAddress(newPin.getAddress());
+                MyLatLng latLng = newPin.getLatLng();
                 if (latLng != null) {
-                    MarkerOptions marker = new MarkerOptions().position(latLng)
+                    MarkerOptions marker = new MarkerOptions().position(
+                            new LatLng(latLng.getLatitude(), latLng.getLongitude())) // firebase conversion trickery
                             .title(newPin.getNetworkName())
                             .snippet("See details"); // TODO: String extraction
                     markerList.add(marker);
@@ -183,7 +184,7 @@ public class MyMapFragment extends Fragment implements GoogleApiClient.Connectio
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                //TODO
             }
 
             @Override
@@ -198,28 +199,13 @@ public class MyMapFragment extends Fragment implements GoogleApiClient.Connectio
         });
     }
 
-    public LatLng getLocationFromAddress(String strAddress) {
-        Geocoder coder = new Geocoder(getContext());
-        List<Address> address;
-        LatLng latLng = null;
-
-        try {
-            //Get latLng from String
-            address = coder.getFromLocationName(strAddress, 5);
-            if (address == null || address.size() == 0) {
-                // handle task asynchronously
-                return null;
-            } else {
-                // take first possibility from the all possibilities.
-                Address location = address.get(0);
-                latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return latLng;
+    protected void startIntentService(Location pinLocation) {
+        Intent intent = new Intent(getContext(), FetchAddressIntentService.class);
+        intent.putExtra(Constants.RECEIVER, mResultReceiver);
+        intent.putExtra(Constants.LOCATION_DATA_EXTRA, pinLocation);
+        getContext().startService(intent);
     }
+
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {

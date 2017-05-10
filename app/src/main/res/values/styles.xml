@@ -25,6 +25,8 @@
 
     <style name="AppTheme.Intro.TextColor" parent="Theme.Intro">
         <item name="android:textColorPrimary">@color/colorLicorice</item>
+        <item name="colorButtonNormal">@color/colorAccent</item>
+        <item name="buttonTint">@color/colorAccent</item>
     </style>
 
     <style name="MainTheme" parent="Theme.AppCompat.Light.NoActionBar">

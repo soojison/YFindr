@@ -66,7 +66,7 @@ public class RecyclerFragment extends Fragment {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                pinAdapter.removePinByKey(dataSnapshot.getKey());
             }
 
             @Override

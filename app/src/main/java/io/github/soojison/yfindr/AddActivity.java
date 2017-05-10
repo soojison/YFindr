@@ -11,16 +11,24 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
+import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.github.soojison.yfindr.data.MyLatLng;
 import io.github.soojison.yfindr.data.Pin;
 
 public class AddActivity extends AppCompatActivity {
+
+    public static final int PLACE_PICKER_REQUEST = 1;
 
     @BindView(R.id.etNetworkName)
     EditText etNetworkName;
@@ -31,6 +39,7 @@ public class AddActivity extends AppCompatActivity {
     @BindView(R.id.ratingBar)
     RatingBar ratingBar;
 
+    private Place place;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +58,20 @@ public class AddActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
+        etAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                try {
+                    startActivityForResult(builder.build(AddActivity.this), PLACE_PICKER_REQUEST);
+                } catch (GooglePlayServicesRepairableException e) {
+                    e.printStackTrace();
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public void addPin() {
@@ -58,6 +81,7 @@ public class AddActivity extends AppCompatActivity {
                 etNetworkName.getText().toString(),
                 etAddress.getText().toString(),
                 FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                new MyLatLng(place.getLatLng().latitude, place.getLatLng().longitude),
                 ratingBar.getRating()
         );
 
@@ -101,5 +125,14 @@ public class AddActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                place = PlacePicker.getPlace(this, data);
+                etAddress.setText(place.getAddress());
+            }
+        }
     }
 }

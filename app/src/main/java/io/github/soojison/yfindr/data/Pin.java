@@ -1,20 +1,24 @@
 package io.github.soojison.yfindr.data;
 
+import com.google.android.gms.maps.model.LatLng;
+
 public class Pin {
 
     private String networkName;
     private String address;
     private String uid;
     private double rating;
+    private MyLatLng latLng;
 
     public Pin() {
 
     }
 
-    public Pin(String networkName, String address, String uid, double rating) {
+    public Pin(String networkName, String address, String uid, MyLatLng latLng, double rating) {
         this.networkName = networkName;
         this.address = address;
         this.uid = uid;
+        this.latLng = latLng;
         this.rating = rating;
     }
 
@@ -48,5 +52,13 @@ public class Pin {
 
     public void setRating(double rating) {
         this.rating = rating;
+    }
+
+    public MyLatLng getLatLng() {
+        return latLng;
+    }
+
+    public void setLatLng(MyLatLng latLng) {
+        this.latLng = latLng;
     }
 }

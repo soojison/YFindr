@@ -18,6 +18,10 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCJMH9crXBpYDuqFRLvgFQq8c-K09YmpfI"/>
 
+        <service
+            android:name=".geocoder.FetchAddressIntentService"
+            android:exported="false"/>
+
         <activity
             android:name=".SplashActivity"
             android:theme="@style/SplashTheme">
