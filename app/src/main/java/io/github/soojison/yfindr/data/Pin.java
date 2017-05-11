@@ -9,16 +9,18 @@ public class Pin {
     private String uid;
     private double rating;
     private MyLatLng latLng;
+    private boolean locked;
 
     public Pin() {
 
     }
 
-    public Pin(String networkName, String address, String uid, MyLatLng latLng, double rating) {
+    public Pin(String networkName, String address, String uid, MyLatLng latLng, boolean locked, double rating) {
         this.networkName = networkName;
         this.address = address;
         this.uid = uid;
         this.latLng = latLng;
+        this.locked = locked;
         this.rating = rating;
     }
 
@@ -60,5 +62,13 @@ public class Pin {
 
     public void setLatLng(MyLatLng latLng) {
         this.latLng = latLng;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 }

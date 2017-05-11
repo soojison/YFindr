@@ -47,12 +47,9 @@ import java.util.Date;
 import java.util.List;
 
 import io.github.soojison.yfindr.MainActivity;
-import io.github.soojison.yfindr.MyLocationManager;
 import io.github.soojison.yfindr.R;
 import io.github.soojison.yfindr.data.MyLatLng;
 import io.github.soojison.yfindr.data.Pin;
-import io.github.soojison.yfindr.geocoder.Constants;
-import io.github.soojison.yfindr.geocoder.FetchAddressIntentService;
 
 public class MyMapFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     public static final String TAG = "MyMapFragment";
@@ -74,6 +71,7 @@ public class MyMapFragment extends Fragment implements GoogleApiClient.Connectio
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         if (cachedView == null) {
+            Toast.makeText(getContext(), "inflated map for the first time", Toast.LENGTH_SHORT).show();
             cachedView = inflater.inflate(R.layout.fragment_map, container, false);
         }
 
@@ -85,7 +83,6 @@ public class MyMapFragment extends Fragment implements GoogleApiClient.Connectio
                     .build();
         }
 
-
         FragmentManager myFM = getChildFragmentManager();
         final SupportMapFragment myMAPF = (SupportMapFragment) myFM.findFragmentById(R.id.map);
 
@@ -96,6 +93,7 @@ public class MyMapFragment extends Fragment implements GoogleApiClient.Connectio
             public void onMapReady(final GoogleMap googleMap) {
                 map = googleMap;
 
+                Toast.makeText(getContext(), "Adding pins", Toast.LENGTH_SHORT).show();
                 for (int i = 0; i < markerList.size(); i++) {
                     googleMap.addMarker(markerList.get(i));
                 }
@@ -118,7 +116,7 @@ public class MyMapFragment extends Fragment implements GoogleApiClient.Connectio
 
                 Location location = locationManager.getLastKnownLocation(locationManager
                         .getBestProvider(criteria, false));
-                LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
+                LatLng currentLoc = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
 
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 15));
 
@@ -197,13 +195,6 @@ public class MyMapFragment extends Fragment implements GoogleApiClient.Connectio
 
             }
         });
-    }
-
-    protected void startIntentService(Location pinLocation) {
-        Intent intent = new Intent(getContext(), FetchAddressIntentService.class);
-        intent.putExtra(Constants.RECEIVER, mResultReceiver);
-        intent.putExtra(Constants.LOCATION_DATA_EXTRA, pinLocation);
-        getContext().startService(intent);
     }
 
 

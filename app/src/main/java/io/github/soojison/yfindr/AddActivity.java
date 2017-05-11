@@ -3,6 +3,7 @@ package io.github.soojison.yfindr;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -10,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
@@ -25,6 +27,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.github.soojison.yfindr.data.MyLatLng;
 import io.github.soojison.yfindr.data.Pin;
+import xyz.hanks.library.SmallBang;
+import xyz.hanks.library.SmallBangListener;
 
 public class AddActivity extends AppCompatActivity {
 
@@ -38,26 +42,21 @@ public class AddActivity extends AppCompatActivity {
 
     @BindView(R.id.ratingBar)
     RatingBar ratingBar;
+    @BindView(R.id.btnCustomToggle)
+    CardView btnCustomToggle;
+
+    private boolean selected = false;
 
     private Place place;
+    private SmallBang mSmallBang;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
         ButterKnife.bind(this);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if(getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(R.string.title_activity_add);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        smallBangAnimation();
+        initializeToolbar();
 
         etAddress.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,6 +73,49 @@ public class AddActivity extends AppCompatActivity {
         });
     }
 
+    private void initializeToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.title_activity_add);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+    }
+
+    private void smallBangAnimation() {
+        mSmallBang = SmallBang.attach2Window(this);
+        btnCustomToggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final int color;
+                if(selected) {
+                    selected = false;
+                    color = android.R.color.transparent;
+                } else {
+                    selected = true;
+                    color = R.color.colorCadetBlue;
+                }
+                mSmallBang.bang(btnCustomToggle,50,new SmallBangListener() {
+                    @Override
+                    public void onAnimationStart() {
+                        btnCustomToggle.setRadius(4);
+                        btnCustomToggle.setCardBackgroundColor(getResources().getColor(color));
+                    }
+
+                    @Override
+                    public void onAnimationEnd() {
+                    }
+                });
+            }
+        });
+    }
+
     public void addPin() {
         String key = FirebaseDatabase.getInstance().getReference().
                 child(MainActivity.KEY_PIN).push().getKey();
@@ -82,6 +124,7 @@ public class AddActivity extends AppCompatActivity {
                 etAddress.getText().toString(),
                 FirebaseAuth.getInstance().getCurrentUser().getUid(),
                 new MyLatLng(place.getLatLng().latitude, place.getLatLng().longitude),
+                selected,
                 ratingBar.getRating()
         );
 
@@ -105,7 +148,6 @@ public class AddActivity extends AppCompatActivity {
             etAddress.setError("Give the address please");
             return false;
             //TODO: Extract strings
-            //TODO: give a google maps view so that you can actually pick a place
         } else {
             return true;
         }

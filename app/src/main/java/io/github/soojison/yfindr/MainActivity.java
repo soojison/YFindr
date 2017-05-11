@@ -27,6 +27,7 @@ import com.ncapdevi.fragnav.FragNavController;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.soojison.yfindr.fragment.MapFragment;
 import io.github.soojison.yfindr.fragment.MyMapFragment;
 import io.github.soojison.yfindr.fragment.RecyclerFragment;
 
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity
         tvUsername.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 
         List<Fragment> fragments = new ArrayList<>(2);
-        fragments.add(new MyMapFragment());
+        fragments.add(new MapFragment());
         fragments.add(new RecyclerFragment());
         fragNavController = new FragNavController(getSupportFragmentManager(), R.id.content, fragments);
         fragNavController.switchTab(TAB_FIRST);
