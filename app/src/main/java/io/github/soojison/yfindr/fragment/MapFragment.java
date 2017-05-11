@@ -16,6 +16,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -42,6 +43,8 @@ public class MapFragment extends SupportMapFragment
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
+
+    public static final String TAG = "MapFragment";
 
     GoogleMap mGoogleMap;
     LocationRequest mLocationRequest;
@@ -273,6 +276,11 @@ public class MapFragment extends SupportMapFragment
 
             }
         });
+    }
+
+    public void moveCamera(LatLng query) {
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(query, 15);
+        mGoogleMap.moveCamera(cameraUpdate);
     }
 
 }

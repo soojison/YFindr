@@ -11,16 +11,23 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.firebase.auth.FirebaseAuth;
 import com.ncapdevi.fragnav.FragNavController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import io.github.soojison.yfindr.fragment.MapFragment;
 import io.github.soojison.yfindr.fragment.RecyclerFragment;
@@ -30,7 +37,9 @@ public class MainActivity extends AppCompatActivity
 
     // TODO: get recycler by nearby pins
     // TODO: get the nearest pin for emergency navigation
+    // TODO: Search brings you to the city in the map
     public static final String KEY_PIN = "pins";
+    private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 202;
 
     private FragNavController fragNavController;
     //indices to fragments
@@ -105,6 +114,17 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_search) {
+            Toast.makeText(this, "SEARCH", Toast.LENGTH_SHORT).show();
+            try {
+                Intent intent =
+                        new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+                                .build(this);
+                startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+            } catch (GooglePlayServicesRepairableException e) {
+                // TODO: Handle the error.
+            } catch (GooglePlayServicesNotAvailableException e) {
+                // TODO: Handle the error.
+            }
             return true;
         } else if (id == R.id.action_add) {
             startActivity(new Intent(this, AddActivity.class));
@@ -126,6 +146,30 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(this, data);
+                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content);
+                if (fragment instanceof MapFragment) {
+                    ((MapFragment) fragment).moveCamera(place.getLatLng());
+                } else {
+                    // TODO
+                    Toast.makeText(this, "Perform search in Map View please", Toast.LENGTH_SHORT).show();
+                }
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(this, data);
+                // TODO: Handle the error.
+                Log.i("TAG_PLACE", status.getStatusMessage());
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+
     }
 
     @Override
