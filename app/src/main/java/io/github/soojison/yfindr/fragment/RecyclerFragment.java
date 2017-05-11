@@ -27,7 +27,6 @@ public class RecyclerFragment extends Fragment {
 
     public static final String TAG = "RecyclerFragment";
 
-    public static final String KEY_PIN = "pins";
     private PinAdapter pinAdapter;
 
     @Nullable

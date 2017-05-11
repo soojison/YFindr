@@ -1,8 +1,10 @@
 package io.github.soojison.yfindr.data;
 
-import com.google.android.gms.maps.model.LatLng;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Pin {
+
+public class Pin implements Parcelable {
 
     private String networkName;
     private String address;
@@ -22,6 +24,13 @@ public class Pin {
         this.latLng = latLng;
         this.locked = locked;
         this.rating = rating;
+    }
+
+    public Pin(Parcel in){
+        networkName = in.readString();
+        address = in.readString();
+        latLng = new MyLatLng(in.readDouble(), in.readDouble());
+        locked = (in.readInt() == 1);
     }
 
     public String getNetworkName() {
@@ -71,4 +80,28 @@ public class Pin {
     public void setLocked(boolean locked) {
         this.locked = locked;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.networkName);
+        dest.writeString(this.address);
+        dest.writeDouble(latLng.getLatitude());
+        dest.writeDouble(latLng.getLongitude());
+        dest.writeInt(locked ? 1 : 0);
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Pin createFromParcel(Parcel in) {
+            return new Pin(in);
+        }
+
+        public Pin[] newArray(int size) {
+            return new Pin[size];
+        }
+    };
 }

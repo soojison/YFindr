@@ -11,8 +11,9 @@
 
     <string name="error_invalid_email">The email format is not correct</string>
     <string name="action_add">Add</string>
-    <string name="service_not_available">Service Not Availible</string>
+    <string name="service_not_available">Service Not Available</string>
     <string name="invalid_lat_long_used">Invalid Latitude and Longitude</string>
     <string name="address_found">Address Found</string>
     <string name="no_address_found">No Address Found</string>
+    <string name="details_title">Network Details</string>
 </resources>

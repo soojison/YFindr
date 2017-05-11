@@ -52,6 +52,7 @@ public class AddActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
         ButterKnife.bind(this);
@@ -104,7 +105,7 @@ public class AddActivity extends AppCompatActivity {
                 mSmallBang.bang(btnCustomToggle,50,new SmallBangListener() {
                     @Override
                     public void onAnimationStart() {
-                        btnCustomToggle.setRadius(4);
+                        btnCustomToggle.setRadius(8);
                         btnCustomToggle.setCardBackgroundColor(getResources().getColor(color));
                     }
 

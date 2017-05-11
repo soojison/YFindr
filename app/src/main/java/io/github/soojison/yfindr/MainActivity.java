@@ -1,16 +1,11 @@
 package io.github.soojison.yfindr;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -28,12 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.soojison.yfindr.fragment.MapFragment;
-import io.github.soojison.yfindr.fragment.MyMapFragment;
 import io.github.soojison.yfindr.fragment.RecyclerFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    // TODO: get recycler by nearby pins
+    // TODO: get the nearest pin for emergency navigation
     public static final String KEY_PIN = "pins";
 
     private FragNavController fragNavController;
