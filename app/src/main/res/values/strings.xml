@@ -16,4 +16,13 @@
     <string name="address_found">Address Found</string>
     <string name="no_address_found">No Address Found</string>
     <string name="details_title">Network Details</string>
+    <string name="network_name_invalid">Give the network a name</string>
+    <string name="network_address_invalid">Give the address please</string>
+    <string name="detail_requires_key">Requires key</string>
+    <string name="detail_unlocked_access">Unlocked access</string>
+    <string name="dialog_permission_title">Location Permission Needed</string>
+    <string name="dialog_permission_message">This app needs the Location permission, please accept to use location functionality</string>
+    <string name="dialog_permission_positive_button">OK</string>
+    <string name="marker_snippet">See details</string>
+    <string name="toast_permission_denied">Permission denied</string>
 </resources>

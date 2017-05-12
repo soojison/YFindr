@@ -22,6 +22,7 @@
 
     </android.support.design.widget.TextInputLayout>
 
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,15 +33,19 @@
         android:textColor="@color/colorAccent"
         android:textSize="12sp" />
 
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin">
     <EditText
         android:id="@+id/etAddress"
         android:paddingTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_horizontal_margin"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:focusableInTouchMode="false" />
+    </android.support.design.widget.TextInputLayout>
 
     <RatingBar
         android:id="@+id/ratingBar"
@@ -67,6 +72,7 @@
             android:padding="@dimen/activity_horizontal_margin">
 
             <ImageView
+                android:id="@+id/imgLock"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -74,6 +80,7 @@
                 android:src="@drawable/ic_lock" />
 
             <TextView
+                android:id="@+id/tvReqKey"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Requires key" />

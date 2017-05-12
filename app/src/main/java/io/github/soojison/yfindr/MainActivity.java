@@ -1,6 +1,7 @@
 package io.github.soojison.yfindr;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -23,12 +24,15 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.ncapdevi.fragnav.FragNavController;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import io.github.soojison.yfindr.data.Pin;
 import io.github.soojison.yfindr.fragment.MapFragment;
 import io.github.soojison.yfindr.fragment.RecyclerFragment;
 
@@ -37,7 +41,6 @@ public class MainActivity extends AppCompatActivity
 
     // TODO: get recycler by nearby pins
     // TODO: get the nearest pin for emergency navigation
-    // TODO: Search brings you to the city in the map
     public static final String KEY_PIN = "pins";
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 202;
 
@@ -45,6 +48,12 @@ public class MainActivity extends AppCompatActivity
     //indices to fragments
     private final int TAB_FIRST = FragNavController.TAB1;
     private final int TAB_SECOND = FragNavController.TAB2;
+
+    public DatabaseReference dbRef;
+    private MenuItem searchButton;
+
+    // TODO: get the list of pins from firebase here?
+    //public List<Pin> distanceList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +74,7 @@ public class MainActivity extends AppCompatActivity
         fragNavController = new FragNavController(getSupportFragmentManager(), R.id.content, fragments);
         fragNavController.switchTab(TAB_FIRST);
 
+        dbRef = FirebaseDatabase.getInstance().getReference(KEY_PIN);
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -75,9 +85,15 @@ public class MainActivity extends AppCompatActivity
             switch (item.getItemId()) {
                 case R.id.tab_map:
                     fragNavController.switchTab(TAB_FIRST);
+                    if (searchButton != null) {
+                        searchButton.setVisible(true);
+                    }
                     return true;
                 case R.id.tab_near_me:
                     fragNavController.switchTab(TAB_SECOND);
+                    if (searchButton != null) {
+                        searchButton.setVisible(false);
+                    }
                     return true;
                 case R.id.tab_emergency:
                     Toast.makeText(MainActivity.this, "THIS IS AN EMERGENCY", Toast.LENGTH_SHORT).show();
@@ -94,9 +110,15 @@ public class MainActivity extends AppCompatActivity
         public void onNavigationItemReselected(@NonNull MenuItem item) {
             if (item.getItemId() == R.id.tab_map) {
                 fragNavController.switchTab(TAB_FIRST);
+                if (searchButton != null) {
+                    searchButton.setVisible(true);
+                }
             }
             if (item.getItemId() == R.id.tab_near_me) {
                 fragNavController.switchTab(TAB_SECOND);
+                if (searchButton != null) {
+                    searchButton.setVisible(false);
+                }
             }
         }
     };
@@ -105,6 +127,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        searchButton = menu.findItem(R.id.action_search);
         return true;
     }
 
@@ -156,15 +179,10 @@ public class MainActivity extends AppCompatActivity
                 Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content);
                 if (fragment instanceof MapFragment) {
                     ((MapFragment) fragment).moveCamera(place.getLatLng());
-                } else {
-                    // TODO
-                    Toast.makeText(this, "Perform search in Map View please", Toast.LENGTH_SHORT).show();
                 }
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
-                // TODO: Handle the error.
                 Log.i("TAG_PLACE", status.getStatusMessage());
-
             } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.
             }
@@ -213,6 +231,10 @@ public class MainActivity extends AppCompatActivity
         BottomNavigationView bottomBar = (BottomNavigationView) findViewById(R.id.bottomBar);
         bottomBar.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         bottomBar.setOnNavigationItemReselectedListener(onNavigationItemReselectedListener);
+    }
+
+    public void distanceList(Location mLocation) {
+
     }
 }
 

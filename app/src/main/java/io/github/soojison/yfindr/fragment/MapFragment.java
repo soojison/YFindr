@@ -2,6 +2,7 @@ package io.github.soojison.yfindr.fragment;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -28,13 +29,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
+import io.github.soojison.yfindr.DetailsActivity;
 import io.github.soojison.yfindr.MainActivity;
+import io.github.soojison.yfindr.R;
 import io.github.soojison.yfindr.data.MyLatLng;
 import io.github.soojison.yfindr.data.Pin;
 
@@ -46,33 +47,32 @@ public class MapFragment extends SupportMapFragment
 
     public static final String TAG = "MapFragment";
 
-    GoogleMap mGoogleMap;
-    LocationRequest mLocationRequest;
-    GoogleApiClient mGoogleApiClient;
-    Location mLastLocation;
-    Marker mCurrLocationMarker;
+    private GoogleMap mGoogleMap;
+    private LocationRequest mLocationRequest;
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
 
+    private HashMap<Marker, Pin> markerMap;
 
     @Override
     public void onCreate(Bundle bundle) {
         initPinListener();
+        markerMap = new HashMap<>();
         super.onCreate(bundle);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
         setUpMapIfNeeded();
-
     }
 
     private void setUpMapIfNeeded() {
-
         if (mGoogleMap == null) {
             getMapAsync(this);
         }
     }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -84,9 +84,8 @@ public class MapFragment extends SupportMapFragment
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap)
-    {
-        mGoogleMap=googleMap;
+    public void onMapReady(GoogleMap googleMap) {
+        mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
@@ -94,9 +93,9 @@ public class MapFragment extends SupportMapFragment
         mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                // TODO
                 mGoogleMap.getUiSettings().setMapToolbarEnabled(true);
-                Toast.makeText(getContext(), "TODO: show details about the marker", Toast.LENGTH_SHORT).show();
+                getContext().startActivity(new Intent(getContext(), DetailsActivity.class)
+                        .putExtra(DetailsActivity.PIN_DETAIL_TAG, markerMap.get(marker)));
             }
         });
 
@@ -112,8 +111,7 @@ public class MapFragment extends SupportMapFragment
                 //Request Location Permission
                 checkLocationPermission();
             }
-        }
-        else {
+        } else {
             buildGoogleApiClient();
             mGoogleMap.setMyLocationEnabled(true);
         }
@@ -142,27 +140,27 @@ public class MapFragment extends SupportMapFragment
     }
 
     @Override
-    public void onConnectionSuspended(int i) {}
+    public void onConnectionSuspended(int i) {
+    }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {}
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+    }
 
     @Override
-    public void onLocationChanged(Location location)
-    {
+    public void onLocationChanged(Location location) {
         mLastLocation = location;
-        if (mCurrLocationMarker != null) {
-            mCurrLocationMarker.remove();
-        }
-
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         //move map camera
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+
+
 
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -175,15 +173,15 @@ public class MapFragment extends SupportMapFragment
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
                 new AlertDialog.Builder(getActivity())
-                        .setTitle("Location Permission Needed")
-                        .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        .setTitle(R.string.dialog_permission_title)
+                        .setMessage(R.string.dialog_permission_message)
+                        .setPositiveButton(R.string.dialog_permission_positive_button, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //Prompt the user once explanation has been shown
                                 ActivityCompat.requestPermissions(getActivity(),
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION );
+                                        MY_PERMISSIONS_REQUEST_LOCATION);
                             }
                         })
                         .create()
@@ -194,7 +192,7 @@ public class MapFragment extends SupportMapFragment
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(getActivity(),
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION );
+                        MY_PERMISSIONS_REQUEST_LOCATION);
             }
         }
     }
@@ -221,10 +219,9 @@ public class MapFragment extends SupportMapFragment
                     }
 
                 } else {
-
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Toast.makeText(getActivity(), "permission denied", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), R.string.toast_permission_denied, Toast.LENGTH_LONG).show();
                 }
                 return;
             }
@@ -235,9 +232,7 @@ public class MapFragment extends SupportMapFragment
     }
 
     private void initPinListener() {
-        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference(MainActivity.KEY_PIN);
-        Toast.makeText(getContext(), "Listening for children", Toast.LENGTH_SHORT).show();
-        dbRef.addChildEventListener(new ChildEventListener() {
+        ((MainActivity) getActivity()).dbRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Pin newPin = dataSnapshot.getValue(Pin.class);
@@ -246,24 +241,33 @@ public class MapFragment extends SupportMapFragment
                     MarkerOptions marker = new MarkerOptions().position(
                             new LatLng(latLng.getLatitude(), latLng.getLongitude())) // firebase conversion trickery
                             .title(newPin.getNetworkName())
-                            .snippet("See details"); // TODO: String extraction
-                    if(newPin.isLocked()) {
+                            .snippet(getString(R.string.marker_snippet)); // TODO: String extraction
+                    if (newPin.isLocked()) {
                         marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                     } else {
                         marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                     }
-                    mGoogleMap.addMarker(marker);
+
+                    Marker newMarker = mGoogleMap.addMarker(marker);
+                    markerMap.put(newMarker, newPin);
                 }
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+                //TODO
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                //TODO
+                Pin deletePin = dataSnapshot.getValue(Pin.class);
+                for (Map.Entry<Marker, Pin> markerPinEntry : markerMap.entrySet()) {
+                    if(markerPinEntry.getValue().equals(deletePin)) {
+                        Marker deleteMarker = markerPinEntry.getKey();
+                        deleteMarker.remove();
+                        break;
+                    }
+                }
             }
 
             @Override

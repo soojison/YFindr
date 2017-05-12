@@ -15,6 +15,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import io.github.soojison.yfindr.DetailsActivity;
@@ -28,7 +29,6 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder> {
     private List<Pin> pinList;
     private List<String> pinKeys;
     private String uID;
-    private int lastPosition = -1;
 
     // get the pins branch
     private DatabaseReference databaseReference;
@@ -57,13 +57,11 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder> {
         holder.tvNetworkName.setText(newPin.getNetworkName());
         holder.tvAddress.setText(newPin.getAddress());
         holder.tvReview.setText(newPin.getRating() + "/5.0");
-        // TODO: Delete your own pins
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "New Activity showing the details of the pin", Toast.LENGTH_SHORT).show();
                 context.startActivity(new Intent(context, DetailsActivity.class)
-                        .putExtra("PIN_DETAIL", newPin));
+                        .putExtra(DetailsActivity.PIN_DETAIL_TAG, newPin));
             }
         });
     }
@@ -93,6 +91,7 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder> {
         pinList.add(pin);
         pinKeys.add(key);
         notifyDataSetChanged();
+        // TODO: SCroll to position not working!!!
     }
 
     public void removePin(int index) {
@@ -108,4 +107,6 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder> {
             removePin(index);
         }
     }
+
+
 }

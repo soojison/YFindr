@@ -31,6 +31,7 @@ public class Pin implements Parcelable {
         address = in.readString();
         latLng = new MyLatLng(in.readDouble(), in.readDouble());
         locked = (in.readInt() == 1);
+        uid = in.readString();
     }
 
     public String getNetworkName() {
@@ -93,6 +94,7 @@ public class Pin implements Parcelable {
         dest.writeDouble(latLng.getLatitude());
         dest.writeDouble(latLng.getLongitude());
         dest.writeInt(locked ? 1 : 0);
+        dest.writeString(uid);
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {

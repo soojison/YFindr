@@ -11,8 +11,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -44,6 +46,12 @@ public class AddActivity extends AppCompatActivity {
     RatingBar ratingBar;
     @BindView(R.id.btnCustomToggle)
     CardView btnCustomToggle;
+
+    @BindView(R.id.imgLock)
+    ImageView imgLock;
+
+    @BindView(R.id.tvReqKey)
+    TextView tvReqKey;
 
     private boolean selected = false;
 
@@ -111,6 +119,13 @@ public class AddActivity extends AppCompatActivity {
 
                     @Override
                     public void onAnimationEnd() {
+                        if(selected) {
+                            tvReqKey.setTextColor(getResources().getColor(android.R.color.white));
+                            imgLock.setColorFilter(getResources().getColor(android.R.color.white));
+                        } else {
+                            tvReqKey.setTextColor(getResources().getColor(android.R.color.black));
+                            imgLock.setColorFilter(getResources().getColor(android.R.color.black));
+                        }
                     }
                 });
             }
@@ -136,28 +151,25 @@ public class AddActivity extends AppCompatActivity {
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.add, menu);
         return true;
     }
 
     public boolean isValidPin() {
         if(TextUtils.isEmpty(etNetworkName.getText().toString())) {
-            etNetworkName.setError("Give the network a name");
+            etNetworkName.setError(getString(R.string.network_name_invalid));
             return false;
         } else if(TextUtils.isEmpty(etAddress.getText().toString())) {
-            etAddress.setError("Give the address please");
+            // TODO: not sure if this is working
+            etAddress.setError(getString(R.string.network_address_invalid));
             return false;
-            //TODO: Extract strings
         } else {
             return true;
         }
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // Handle action bar item clicks here.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
