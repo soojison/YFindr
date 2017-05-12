@@ -21,6 +21,7 @@ import java.util.List;
 import io.github.soojison.yfindr.DetailsActivity;
 import io.github.soojison.yfindr.MainActivity;
 import io.github.soojison.yfindr.R;
+import io.github.soojison.yfindr.data.MyLatLng;
 import io.github.soojison.yfindr.data.Pin;
 
 public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder> {

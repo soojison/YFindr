@@ -16,6 +16,8 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
+import java.util.Map;
+
 import io.github.soojison.yfindr.MainActivity;
 import io.github.soojison.yfindr.R;
 import io.github.soojison.yfindr.adapter.PinAdapter;
@@ -44,39 +46,13 @@ public class RecyclerFragment extends Fragment {
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(pinAdapter);
         recyclerView.setItemAnimator(new FadeInLeftAnimator());
-        
-        initPinListener();
-
+        populateRecycler();
         return rootView;
     }
 
-    private void initPinListener() {
-        ((MainActivity) getActivity()).dbRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Pin newPin = dataSnapshot.getValue(Pin.class);
-                pinAdapter.addPin(newPin, dataSnapshot.getKey());
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                pinAdapter.removePinByKey(dataSnapshot.getKey());
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+    private void populateRecycler() {
+        for (Map.Entry<String, Pin> current : ((MainActivity) getContext()).nearbyPins.entrySet()) {
+            pinAdapter.addPin(current.getValue(), current.getKey());
+        }
     }
 }

@@ -1,6 +1,8 @@
 package io.github.soojison.yfindr.fragment;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -36,6 +38,7 @@ import java.util.Map;
 import io.github.soojison.yfindr.DetailsActivity;
 import io.github.soojison.yfindr.MainActivity;
 import io.github.soojison.yfindr.R;
+import io.github.soojison.yfindr.adapter.PinAdapter;
 import io.github.soojison.yfindr.data.MyLatLng;
 import io.github.soojison.yfindr.data.Pin;
 
@@ -53,6 +56,8 @@ public class MapFragment extends SupportMapFragment
     private Location mLastLocation;
 
     private HashMap<Marker, Pin> markerMap;
+
+    private OnLocationUpdatedListener mListener;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -150,13 +155,27 @@ public class MapFragment extends SupportMapFragment
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation = location;
+        // TODO: Get rid of this
+        MyLatLng keletiPos = new MyLatLng(47.5003159,19.0818379);
+        MyLatLng curPos = new MyLatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+        Toast.makeText(getContext(), keletiPos.getDistance(curPos) +"m", Toast.LENGTH_SHORT).show();
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         //move map camera
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+        if (mListener != null) {
+            mListener.onLocationUpdated(location);
+        }
+    }
 
-
-
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnLocationUpdatedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnLocationUpdatedListener");
+        }
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
@@ -231,26 +250,30 @@ public class MapFragment extends SupportMapFragment
         }
     }
 
+
+
+    public MarkerOptions createMarkerOptions(Pin pin) {
+        MyLatLng latLng = pin.getLatLng();
+        MarkerOptions ret = new MarkerOptions()
+                .position(new LatLng(latLng.getLatitude(), latLng.getLongitude()))
+                .title(pin.getNetworkName())
+                .snippet(getString(R.string.marker_snippet));
+        if(pin.isLocked()) {
+            ret.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+        } else {
+            ret.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        }
+        return ret;
+    }
+
     private void initPinListener() {
         ((MainActivity) getActivity()).dbRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Pin newPin = dataSnapshot.getValue(Pin.class);
-                MyLatLng latLng = newPin.getLatLng();
-                if (latLng != null) {
-                    MarkerOptions marker = new MarkerOptions().position(
-                            new LatLng(latLng.getLatitude(), latLng.getLongitude())) // firebase conversion trickery
-                            .title(newPin.getNetworkName())
-                            .snippet(getString(R.string.marker_snippet)); // TODO: String extraction
-                    if (newPin.isLocked()) {
-                        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                    } else {
-                        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                    }
-
-                    Marker newMarker = mGoogleMap.addMarker(marker);
-                    markerMap.put(newMarker, newPin);
-                }
+                MarkerOptions options = createMarkerOptions(newPin);
+                Marker newMarker = mGoogleMap.addMarker(options);
+                markerMap.put(newMarker, newPin);
             }
 
             @Override
@@ -285,6 +308,10 @@ public class MapFragment extends SupportMapFragment
     public void moveCamera(LatLng query) {
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(query, 15);
         mGoogleMap.moveCamera(cameraUpdate);
+    }
+
+    public interface OnLocationUpdatedListener {
+        public void onLocationUpdated(Location location);
     }
 
 }
