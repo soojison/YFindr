@@ -10,6 +10,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -18,6 +21,8 @@ import com.google.firebase.database.DatabaseError;
 
 import java.util.Map;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.github.soojison.yfindr.MainActivity;
 import io.github.soojison.yfindr.R;
 import io.github.soojison.yfindr.adapter.PinAdapter;
@@ -28,6 +33,12 @@ public class RecyclerFragment extends Fragment {
 
     public static final String TAG = "RecyclerFragment";
 
+    @BindView(R.id.layoutSadface)
+    RelativeLayout layoutSadface;
+
+    @BindView(R.id.layoutRecycler)
+    LinearLayout layoutRecycler;
+
     private PinAdapter pinAdapter;
     private RecyclerView recyclerView;
 
@@ -35,6 +46,7 @@ public class RecyclerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recycler, container, false);
+        ButterKnife.bind(this, rootView);
 
         pinAdapter = new PinAdapter(getContext(),
                 FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -51,8 +63,17 @@ public class RecyclerFragment extends Fragment {
     }
 
     private void populateRecycler() {
-        for (Map.Entry<String, Pin> current : ((MainActivity) getContext()).nearbyPins.entrySet()) {
-            pinAdapter.addPin(current.getValue(), current.getKey());
+        if(((MainActivity) getContext()).getNearbyPins().isEmpty()) {
+            // show condolences
+            // TODO: This is fucking up the view for some reason
+            layoutSadface.setVisibility(View.VISIBLE);
+            layoutRecycler.setVisibility(View.INVISIBLE);
+        } else {
+            layoutSadface.setVisibility(View.INVISIBLE);
+            layoutRecycler.setVisibility(View.VISIBLE);
+            for (Map.Entry<String, Pin> current : ((MainActivity) getContext()).getNearbyPins().entrySet()) {
+                pinAdapter.addPin(current.getValue(), current.getKey());
+            }
         }
     }
 }

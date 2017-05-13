@@ -2,6 +2,7 @@ package io.github.soojison.yfindr;
 
 import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -48,9 +49,7 @@ import io.github.soojison.yfindr.data.Pin;
 import io.github.soojison.yfindr.fragment.MapFragment;
 import io.github.soojison.yfindr.fragment.RecyclerFragment;
 
-// TODO: get recycler by nearby pins
-// TODO: get the nearest pin for emergency navigation --> Firebase data query in MainActivity instead of fragments
-
+// TODO: so how do you prevent user from seeing things when your current location is not ready?
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MapFragment.OnLocationUpdatedListener{
@@ -66,6 +65,9 @@ public class MainActivity extends AppCompatActivity
     private MenuItem searchButton;
 
     private HashMap<String, Pin> pinList;
+
+    private HashMap<String, Pin> nearbyPins;
+    private Pin closestPin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,9 +159,12 @@ public class MainActivity extends AppCompatActivity
                     }
                     return true;
                 case R.id.tab_emergency:
-                    // TODO:
-                    Toast.makeText(MainActivity.this, "THIS IS AN EMERGENCY", Toast.LENGTH_SHORT).show();
-                    return true;
+                    Toast.makeText(MainActivity.this, "Emeregency navigation to the closest Wi-Fi", Toast.LENGTH_SHORT).show();
+                    Intent navigation = new Intent(Intent.ACTION_VIEW, Uri
+                            .parse("http://maps.google.com/maps?daddr="
+                                    + closestPin.getLatLng().getLatitude() + ","
+                                    + closestPin.getLatLng().getLatitude() + "(" + closestPin.getAddress() + ")"));
+                    startActivity(navigation);
             }
             return false;
         }
@@ -278,10 +283,13 @@ public class MainActivity extends AppCompatActivity
         return navigationView;
     }
 
-    public HashMap<String, Pin> nearbyPins;
+
+    public HashMap<String, Pin> getNearbyPins() {
+        return nearbyPins;
+    }
     public boolean isNearBy(MyLatLng currentLoc, MyLatLng pinLoc) {
-        // 2km = 2000m radius
-        return currentLoc.getDistance(pinLoc) <= 2000;
+        // 2.5km = 2500m radius
+        return currentLoc.getDistance(pinLoc) <= 2500;
     }
 
     public void findNearbyPins(Location location) {
@@ -294,9 +302,26 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void getClosestPin(Location location) {
+        Pin closestSoFar = new Pin(); // eventually will get assigned to some real pin
+        double distanceSoFar = 2500;
+        MyLatLng myLocation = new MyLatLng(location.getLatitude(), location.getLongitude());
+        for (Map.Entry<String, Pin> current : nearbyPins.entrySet()) {
+            Pin currentPin = current.getValue();
+            double currentDistance = currentPin.getLatLng().getDistance(myLocation);
+            if(currentDistance < distanceSoFar) {
+                closestSoFar = currentPin;
+                distanceSoFar = currentDistance;
+            }
+        }
+        closestPin = closestSoFar;
+    }
+
     @Override
     public void onLocationUpdated(Location location) {
+        Toast.makeText(this, "Getting new list of positions", Toast.LENGTH_SHORT).show();
         findNearbyPins(location);
+        getClosestPin(location);
     }
 }
 

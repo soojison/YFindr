@@ -115,10 +115,6 @@ public class AddActivity extends AppCompatActivity {
                     public void onAnimationStart() {
                         btnCustomToggle.setRadius(8);
                         btnCustomToggle.setCardBackgroundColor(getResources().getColor(color));
-                    }
-
-                    @Override
-                    public void onAnimationEnd() {
                         if(selected) {
                             tvReqKey.setTextColor(getResources().getColor(android.R.color.white));
                             imgLock.setColorFilter(getResources().getColor(android.R.color.white));
@@ -126,6 +122,10 @@ public class AddActivity extends AppCompatActivity {
                             tvReqKey.setTextColor(getResources().getColor(android.R.color.black));
                             imgLock.setColorFilter(getResources().getColor(android.R.color.black));
                         }
+                    }
+
+                    @Override
+                    public void onAnimationEnd() {
                     }
                 });
             }
