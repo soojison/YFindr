@@ -32,6 +32,8 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +43,7 @@ import io.github.soojison.yfindr.R;
 import io.github.soojison.yfindr.adapter.PinAdapter;
 import io.github.soojison.yfindr.data.MyLatLng;
 import io.github.soojison.yfindr.data.Pin;
+import io.github.soojison.yfindr.eventbus.LocationEvent;
 
 public class MapFragment extends SupportMapFragment
         implements OnMapReadyCallback,
@@ -133,10 +136,14 @@ public class MapFragment extends SupportMapFragment
 
     @Override
     public void onConnected(Bundle bundle) {
+        Toast.makeText(getContext(),"onConnected",Toast.LENGTH_SHORT).show();
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setInterval(5000); //5 seconds
+        mLocationRequest.setFastestInterval(3000); //3 seconds
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
         if (ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {

@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class SplashActivity extends AppCompatActivity {
 
     private static final long SPLASH_LENGTH = 3000;
@@ -27,7 +29,12 @@ public class SplashActivity extends AppCompatActivity {
                 if (isFirstTime) {
                     startActivity(new Intent(SplashActivity.this, IntroActivity.class));
                 } else {
-                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                    FirebaseAuth auth = FirebaseAuth.getInstance();
+                    if (auth.getCurrentUser() != null) {
+                        startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                    } else {
+                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                    }
                 }
                 finish();
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

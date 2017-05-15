@@ -19,6 +19,10 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.Map;
 
 import butterknife.BindView;
@@ -27,6 +31,7 @@ import io.github.soojison.yfindr.MainActivity;
 import io.github.soojison.yfindr.R;
 import io.github.soojison.yfindr.adapter.PinAdapter;
 import io.github.soojison.yfindr.data.Pin;
+import io.github.soojison.yfindr.eventbus.LocationEvent;
 
 public class RecyclerFragment extends Fragment {
 
@@ -40,6 +45,23 @@ public class RecyclerFragment extends Fragment {
 
     private PinAdapter pinAdapter;
     private RecyclerView recyclerView;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(LocationEvent event) {
+        Toast.makeText(getContext(), "Got loc", Toast.LENGTH_SHORT).show();
+    }
 
     @Nullable
     @Override
@@ -57,7 +79,7 @@ public class RecyclerFragment extends Fragment {
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(pinAdapter);
         Toast.makeText(getContext(), "Created a recyclerview ... for the first time?", Toast.LENGTH_SHORT).show();
-        // use event bus!
+
         populateRecycler();
         return rootView;
     }
@@ -65,7 +87,6 @@ public class RecyclerFragment extends Fragment {
     private void populateRecycler() {
         if(((MainActivity) getContext()).getNearbyPins().isEmpty()) {
             // show condolences
-            // TODO: This is fucking up the view for some reason
             layoutSadface.setVisibility(View.VISIBLE);
             layoutRecycler.setVisibility(View.INVISIBLE);
         } else {
@@ -76,4 +97,5 @@ public class RecyclerFragment extends Fragment {
             }
         }
     }
+
 }
