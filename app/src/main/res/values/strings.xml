@@ -3,11 +3,16 @@
     <string name="ait">AIT</string>
     <string name="title_activity_main">YFindr</string>
     <string name="title_activity_add">Add a new pin</string>
+    <string name="title_activity_about">About the app</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_search">Search</string>
+
+    <string name="network_name_invalid">Please provide the name of the network</string>
+    <string name="network_address_invalid">Please provide the address of the network</string>
+    <string name="detail_requires_key">Requires key</string>
 
     <!-- LoginActivity -->
     <string name="error_invalid_email">The email format is not correct</string>
@@ -15,9 +20,7 @@
     <string name="service_not_available">Service Not Available</string>
     <string name="invalid_lat_long_used">Invalid Latitude and Longitude</string>
     <string name="details_title">Network Details</string>
-    <string name="network_name_invalid">Give the network a name</string>
-    <string name="network_address_invalid">Give the address please</string>
-    <string name="detail_requires_key">Requires key</string>
+
     <string name="detail_unlocked_access">Unlocked access</string>
     <string name="dialog_permission_title">Location Permission Needed</string>
     <string name="dialog_permission_message">This app needs the Location permission, please accept to use location functionality</string>
@@ -50,4 +53,9 @@
     <string name="details_get_directions">Get directions</string>
     <string name="details_report">Report</string>
     <string name="sadface_unfortunate">Sadly, there is no known network within 2km radius from your position.</string>
+    <string name="lorem_ipsum">
+        YFinder (Wi-Fi Finder) was created by Sooji Son as a final project for AIT-Budapest Spring 2017 Mobile Development course.
+        Special thanks to professor Péter Ekler for a very understandable course as well as being very helpful!\n\n
+        For a world where you can find free Wi-Fi no matter where you go. YFindr 2017.
+    </string>
 </resources>

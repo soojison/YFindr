@@ -26,7 +26,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import io.github.soojison.yfindr.data.MyLatLng;
 import io.github.soojison.yfindr.data.Pin;
 import xyz.hanks.library.SmallBang;
@@ -70,6 +69,7 @@ public class AddActivity extends AppCompatActivity {
         etAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                etAddress.setError(null);
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                 try {
                     startActivityForResult(builder.build(AddActivity.this), PLACE_PICKER_REQUEST);
@@ -156,10 +156,12 @@ public class AddActivity extends AppCompatActivity {
 
     public boolean isValidPin() {
         if(TextUtils.isEmpty(etNetworkName.getText().toString())) {
+            etNetworkName.requestFocus();
             etNetworkName.setError(getString(R.string.network_name_invalid));
             return false;
         } else if(TextUtils.isEmpty(etAddress.getText().toString())) {
-            // TODO: not sure if this is working
+            etAddress.setFocusableInTouchMode(true);
+            etAddress.requestFocus();
             etAddress.setError(getString(R.string.network_address_invalid));
             return false;
         } else {

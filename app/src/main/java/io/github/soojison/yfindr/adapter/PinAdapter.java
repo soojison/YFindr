@@ -3,25 +3,21 @@ package io.github.soojison.yfindr.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import io.github.soojison.yfindr.DetailsActivity;
 import io.github.soojison.yfindr.MainActivity;
 import io.github.soojison.yfindr.R;
-import io.github.soojison.yfindr.data.MyLatLng;
 import io.github.soojison.yfindr.data.Pin;
 
 public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder> {
@@ -106,6 +102,11 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder> {
         if (index != -1) {
             removePin(index);
         }
+    }
+
+    public void clear() {
+        pinList.clear();
+        pinKeys.clear();
     }
 
 

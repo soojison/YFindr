@@ -67,7 +67,6 @@
             android:background="@color/colorAccent"
             android:textColor="@android:color/white"
             android:text="Register"/>
-        <!-- TODO: is this even right way to style buttons? -->
 
     </LinearLayout>
 </ScrollView>

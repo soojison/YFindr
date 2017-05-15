@@ -1,6 +1,7 @@
 package io.github.soojison.yfindr.fragment;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -59,11 +60,12 @@ public class RecyclerFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Toast.makeText(getContext(), "Resumed", Toast.LENGTH_SHORT).show();
-        populateRecycler();
+        populateRecycler(); // calling it here since the location updates things constantly
     }
 
     private void populateRecycler() {
+        // because of onresume, the recycler should empty when it gets resumed
+        pinAdapter.clear();
         if(((MainActivity) getContext()).getNearbyPins().isEmpty()) {
             // show condolences
             layoutSadface.setVisibility(View.VISIBLE);

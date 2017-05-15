@@ -7,8 +7,6 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -63,7 +61,6 @@ public class LoginActivity extends AppCompatActivity {
                         FirebaseUser user = task.getResult().getUser();
                         user.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(
                                 getUsernameFromEmail(user.getEmail())).build());
-                        // TODO: String extract
                         Toast.makeText(LoginActivity.this, R.string.login_registration_successful,
                                 Toast.LENGTH_LONG).show();
                     } else {
@@ -123,7 +120,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isFormValid() {
         if(TextUtils.isEmpty(etEmail.getText().toString())) {
-            //TODO: extract string
             etEmail.setError(getString(R.string.login_error_email));
             return false;
         } else if(TextUtils.isEmpty(etPassword.getText().toString())) {

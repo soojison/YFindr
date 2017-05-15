@@ -39,7 +39,10 @@
         <activity
             android:name=".AddActivity"
             android:theme="@style/MainTheme" />
-        <activity android:name=".DetailsActivity"
+        <activity
+            android:name=".DetailsActivity"
+            android:theme="@style/MainTheme" />
+        <activity android:name=".AboutActivity"
             android:theme="@style/MainTheme"/>
     </application>
 

@@ -45,11 +45,10 @@ import io.github.soojison.yfindr.data.Pin;
 import io.github.soojison.yfindr.fragment.MapFragment;
 import io.github.soojison.yfindr.fragment.RecyclerFragment;
 
-// TODO: so how do you prevent user from seeing things when your current location is not ready?
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MapFragment.OnLocationUpdatedListener {
 
+    // TODO: Cache data so when the user has no internet connection they can use this app... like smh that's the whole purpose
     public static final String KEY_PIN = "pins";
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 202;
 
@@ -206,7 +205,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_logout) {
             showLogoutDialog();
         } else if (id == R.id.nav_about) {
-            // TODO: show about
+            startActivity(new Intent(MainActivity.this, AboutActivity.class));
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -320,7 +319,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLocationUpdated(Location location) {
         findNearbyPins(location);
-        Toast.makeText(this, "nearby pins: " + nearbyPins.size(), Toast.LENGTH_SHORT).show();
         getClosestPin(location);
     }
 

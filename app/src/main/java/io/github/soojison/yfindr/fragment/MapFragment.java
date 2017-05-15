@@ -136,6 +136,11 @@ public class MapFragment extends SupportMapFragment
     public void onConnected(Bundle bundle) {
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
+        if(mLastLocation != null) {
+            //move map camera
+            LatLng latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+        }
 
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(7000); //7 seconds
@@ -160,9 +165,6 @@ public class MapFragment extends SupportMapFragment
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation = location;
-        //move map camera
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
         if (mListener != null) { // for fragment - activity communication
             mListener.onLocationUpdated(location);
         }
