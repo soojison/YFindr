@@ -129,7 +129,6 @@ public class MainActivity extends AppCompatActivity
     private void initBottomBar() {
         BottomNavigationView bottomBar = (BottomNavigationView) findViewById(R.id.bottomBar);
         bottomBar.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        bottomBar.setOnNavigationItemReselectedListener(onNavigationItemReselectedListener);
     }
 
     private void initializeFragmentSwitcher() {
@@ -159,35 +158,16 @@ public class MainActivity extends AppCompatActivity
                     }
                     return true;
                 case R.id.tab_emergency:
-                    Toast.makeText(MainActivity.this, "Emeregency navigation to the closest Wi-Fi", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Navigating to the closest Wi-Fi", Toast.LENGTH_SHORT).show();
                     Intent navigation = new Intent(Intent.ACTION_VIEW, Uri
                             .parse("http://maps.google.com/maps?daddr="
                                     + closestPin.getLatLng().getLatitude() + ","
-                                    + closestPin.getLatLng().getLatitude() + "(" + closestPin.getAddress() + ")"));
+                                    + closestPin.getLatLng().getLongitude()));
                     startActivity(navigation);
             }
             return false;
         }
 
-    };
-
-    private BottomNavigationView.OnNavigationItemReselectedListener onNavigationItemReselectedListener
-            = new BottomNavigationView.OnNavigationItemReselectedListener() {
-        @Override
-        public void onNavigationItemReselected(@NonNull MenuItem item) {
-            if (item.getItemId() == R.id.tab_map) {
-                fragNavController.switchTab(TAB_FIRST);
-                if (searchButton != null) {
-                    searchButton.setVisible(true);
-                }
-            }
-            if (item.getItemId() == R.id.tab_near_me) {
-                fragNavController.switchTab(TAB_SECOND);
-                if (searchButton != null) {
-                    searchButton.setVisible(false);
-                }
-            }
-        }
     };
 
     @Override
@@ -322,7 +302,6 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(this, "Getting new list of positions", Toast.LENGTH_SHORT).show();
         findNearbyPins(location);
         getClosestPin(location);
-
     }
 }
 

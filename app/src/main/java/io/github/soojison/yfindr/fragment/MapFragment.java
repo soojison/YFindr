@@ -156,6 +156,7 @@ public class MapFragment extends SupportMapFragment
     public void onLocationChanged(Location location) {
         mLastLocation = location;
         //move map camera
+        Toast.makeText(getContext(), "Got new location", Toast.LENGTH_SHORT).show();
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
         if (mListener != null) { // fragment - activity communication

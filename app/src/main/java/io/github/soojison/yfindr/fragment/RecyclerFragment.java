@@ -27,7 +27,6 @@ import io.github.soojison.yfindr.MainActivity;
 import io.github.soojison.yfindr.R;
 import io.github.soojison.yfindr.adapter.PinAdapter;
 import io.github.soojison.yfindr.data.Pin;
-import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator;
 
 public class RecyclerFragment extends Fragment {
 
@@ -57,7 +56,8 @@ public class RecyclerFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(pinAdapter);
-        recyclerView.setItemAnimator(new FadeInLeftAnimator());
+        Toast.makeText(getContext(), "Created a recyclerview ... for the first time?", Toast.LENGTH_SHORT).show();
+        // use event bus!
         populateRecycler();
         return rootView;
     }
@@ -69,7 +69,7 @@ public class RecyclerFragment extends Fragment {
             layoutSadface.setVisibility(View.VISIBLE);
             layoutRecycler.setVisibility(View.INVISIBLE);
         } else {
-            layoutSadface.setVisibility(View.INVISIBLE);
+            //layoutSadface.setVisibility(View.INVISIBLE);
             layoutRecycler.setVisibility(View.VISIBLE);
             for (Map.Entry<String, Pin> current : ((MainActivity) getContext()).getNearbyPins().entrySet()) {
                 pinAdapter.addPin(current.getValue(), current.getKey());
