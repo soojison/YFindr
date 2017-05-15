@@ -64,10 +64,11 @@ public class DetailsActivity extends AppCompatActivity {
             btnNavigate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent navigation = new Intent(Intent.ACTION_VIEW, Uri
-                            .parse("http://maps.google.com/maps?daddr="
-                                    + position.latitude + ","
-                                    + position.longitude));
+                    Intent navigation = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(
+                            R.string.google_maps_query,
+                            position.latitude,
+                            position.longitude
+                    )));
                     startActivity(navigation);
                 }
             });

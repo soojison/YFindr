@@ -92,7 +92,6 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder> {
         pinList.add(pin);
         pinKeys.add(key);
         notifyDataSetChanged();
-        // TODO: SCroll to position not working!!!
     }
 
     public void removePin(int index) {

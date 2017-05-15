@@ -40,7 +40,6 @@
                 android:id="@+id/address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="DUMMY ADDDRESS"
                 android:textColor="@android:color/white"
 
                 android:layout_marginBottom="@dimen/activity_horizontal_margin"/>
@@ -71,7 +70,7 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:textColor="@android:color/white"
-                    android:text="Requires password?"/>
+                    android:text="@string/details_requires_password"/>
 
                 <TextView
                     android:id="@+id/tvReqKey"
@@ -79,8 +78,7 @@
                     android:layout_toRightOf="@id/imgLock"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    android:text="YES"/>
+                    android:textColor="@android:color/white"/>
 
             </RelativeLayout>
 
@@ -97,13 +95,13 @@
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/colorCadetBlueDark"
                     android:textColor="@android:color/white"
-                    android:text="Get directions"/>
+                    android:text="@string/details_get_directions"/>
 
                 <Button
                     android:id="@+id/btnReport"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Report"
+                    android:text="@string/details_report"
                     android:backgroundTint="@color/colorAccent"
                     android:textColor="@android:color/white"/>
 

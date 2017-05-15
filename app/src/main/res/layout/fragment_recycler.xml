@@ -4,22 +4,22 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/sadface_layout"/>
-
     <LinearLayout
         android:id="@+id/layoutRecycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="top"
         android:orientation="vertical">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerViewPins"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:visibility="visible">
 
         </android.support.v7.widget.RecyclerView>
 
     </LinearLayout>
+
+    <include layout="@layout/sadface_layout" />
 
 </LinearLayout>

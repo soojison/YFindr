@@ -2,7 +2,6 @@ package io.github.soojison.yfindr.fragment;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -38,7 +37,6 @@ import java.util.Map;
 import io.github.soojison.yfindr.DetailsActivity;
 import io.github.soojison.yfindr.MainActivity;
 import io.github.soojison.yfindr.R;
-import io.github.soojison.yfindr.adapter.PinAdapter;
 import io.github.soojison.yfindr.data.MyLatLng;
 import io.github.soojison.yfindr.data.Pin;
 
@@ -61,7 +59,6 @@ public class MapFragment extends SupportMapFragment
 
     @Override
     public void onCreate(Bundle bundle) {
-        initPinListener();
         markerMap = new HashMap<>();
         super.onCreate(bundle);
     }
@@ -70,6 +67,7 @@ public class MapFragment extends SupportMapFragment
     public void onResume() {
         super.onResume();
         setUpMapIfNeeded();
+        if (mGoogleApiClient != null) mGoogleApiClient.connect();
     }
 
     private void setUpMapIfNeeded() {
@@ -86,11 +84,14 @@ public class MapFragment extends SupportMapFragment
         if (mGoogleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
+        onConnected(Bundle.EMPTY);
     }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
+        initPinListener();
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
@@ -135,9 +136,10 @@ public class MapFragment extends SupportMapFragment
     public void onConnected(Bundle bundle) {
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
+
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(5000); //5 seconds
-        mLocationRequest.setFastestInterval(3000); //3 seconds
+        mLocationRequest.setInterval(7000); //7 seconds
+        mLocationRequest.setFastestInterval(5000); //5 seconds
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
         if (ContextCompat.checkSelfPermission(getActivity(),
@@ -172,7 +174,8 @@ public class MapFragment extends SupportMapFragment
         try {
             mListener = (OnLocationUpdatedListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnLocationUpdatedListener");
+            throw new ClassCastException(activity.toString() +
+                    " must implement OnLocationUpdatedListener");
         }
     }
 
@@ -249,14 +252,13 @@ public class MapFragment extends SupportMapFragment
     }
 
 
-
     public MarkerOptions createMarkerOptions(Pin pin) {
         MyLatLng latLng = pin.getLatLng();
         MarkerOptions ret = new MarkerOptions()
                 .position(new LatLng(latLng.getLatitude(), latLng.getLongitude()))
                 .title(pin.getNetworkName())
                 .snippet(getString(R.string.marker_snippet));
-        if(pin.isLocked()) {
+        if (pin.isLocked()) {
             ret.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         } else {
             ret.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
@@ -283,7 +285,7 @@ public class MapFragment extends SupportMapFragment
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 Pin deletePin = dataSnapshot.getValue(Pin.class);
                 for (Map.Entry<Marker, Pin> markerPinEntry : markerMap.entrySet()) {
-                    if(markerPinEntry.getValue().equals(deletePin)) {
+                    if (markerPinEntry.getValue().equals(deletePin)) {
                         Marker deleteMarker = markerPinEntry.getKey();
                         deleteMarker.remove();
                         break;

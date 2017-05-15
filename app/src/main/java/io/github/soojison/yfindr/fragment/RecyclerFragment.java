@@ -53,10 +53,14 @@ public class RecyclerFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(pinAdapter);
-        Toast.makeText(getContext(), "Created a recyclerview ... for the first time?", Toast.LENGTH_SHORT).show();
-
-        populateRecycler();
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Toast.makeText(getContext(), "Resumed", Toast.LENGTH_SHORT).show();
+        populateRecycler();
     }
 
     private void populateRecycler() {
@@ -65,7 +69,7 @@ public class RecyclerFragment extends Fragment {
             layoutSadface.setVisibility(View.VISIBLE);
             layoutRecycler.setVisibility(View.INVISIBLE);
         } else {
-            //layoutSadface.setVisibility(View.INVISIBLE);
+            layoutSadface.setVisibility(View.INVISIBLE);
             layoutRecycler.setVisibility(View.VISIBLE);
             for (Map.Entry<String, Pin> current : ((MainActivity) getContext()).getNearbyPins().entrySet()) {
                 pinAdapter.addPin(current.getValue(), current.getKey());

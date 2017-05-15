@@ -9,12 +9,11 @@
 
     <string name="action_search">Search</string>
 
+    <!-- LoginActivity -->
     <string name="error_invalid_email">The email format is not correct</string>
     <string name="action_add">Add</string>
     <string name="service_not_available">Service Not Available</string>
     <string name="invalid_lat_long_used">Invalid Latitude and Longitude</string>
-    <string name="address_found">Address Found</string>
-    <string name="no_address_found">No Address Found</string>
     <string name="details_title">Network Details</string>
     <string name="network_name_invalid">Give the network a name</string>
     <string name="network_address_invalid">Give the address please</string>
@@ -26,4 +25,29 @@
     <string name="marker_snippet">See details</string>
     <string name="toast_permission_denied">Permission denied</string>
     <string name="google_maps_query">http://maps.google.com/maps?daddr=%1$f, %2$f</string>
+
+    <!-- Intro Activity -->
+    <string name="intro_crowd">Crowdsourced database</string>
+    <string name="intro_crowd_desc">Made by the people, for the people</string>
+    <string name="intro_earth">From all over the world</string>
+    <string name="intro_earth_desc">Made available by your help</string>
+    <string name="intro_hand">At the tip of your fingers</string>
+    <string name="intro_hand_desc">Would you like to join us?</string>
+    <string name="intro_permissions_button">Grant Permissions</string>
+    <string name="login_registration_successful">Registration successful</string>
+    <string name="login_error_email">Email Must not be empty</string>
+    <string name="login_error_password">Password must not be empty</string>
+    <string name="login_error_loading">Authenticating...</string>
+    <string name="main_emergency_toast">Navigating to the closest Wi-Fi</string>
+    <string name="dialog_logout_title">Logging out</string>
+    <string name="dialog_logout_message">Are you sure?</string>
+    <string name="dialog_logout_positive">Yes</string>
+    <string name="dialog_logout_negative">No</string>
+    <string name="add_et_network_name">Network Name</string>
+    <string name="add_et_address">Address</string>
+    <string name="button_requires_key">Requires key</string>
+    <string name="details_requires_password">Requires password?</string>
+    <string name="details_get_directions">Get directions</string>
+    <string name="details_report">Report</string>
+    <string name="sadface_unfortunate">Sadly, there is no known network within 2km radius from your position.</string>
 </resources>

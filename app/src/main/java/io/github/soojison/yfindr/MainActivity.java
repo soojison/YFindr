@@ -48,7 +48,7 @@ import io.github.soojison.yfindr.fragment.RecyclerFragment;
 // TODO: so how do you prevent user from seeing things when your current location is not ready?
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, MapFragment.OnLocationUpdatedListener{
+        implements NavigationView.OnNavigationItemSelectedListener, MapFragment.OnLocationUpdatedListener {
 
     public static final String KEY_PIN = "pins";
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 202;
@@ -157,10 +157,10 @@ public class MainActivity extends AppCompatActivity
                     }
                     return true;
                 case R.id.tab_emergency:
-                    if(closestPin == null || closestPin.getLatLng() == null) {
+                    if (closestPin == null || closestPin.getLatLng() == null) {
                         Toast.makeText(MainActivity.this, "Current location info not availible yet", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(MainActivity.this, "Navigating to the closest Wi-Fi", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, R.string.main_emergency_toast, Toast.LENGTH_SHORT).show();
                         Intent navigation = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(
                                 R.string.google_maps_query,
                                 closestPin.getLatLng().getLatitude(),
@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_search) {
             try {
                 Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
-                                .build(this);
+                        .build(this);
                 startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
             } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                 Log.i("TAG_SEARCH", e.getLocalizedMessage());
@@ -214,10 +214,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void showLogoutDialog() {
-        // TODO: Extract string
-        new AlertDialog.Builder(this).setTitle("Logout")
-                .setMessage("Are you sure?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(this).setTitle(R.string.dialog_logout_title)
+                .setMessage(R.string.dialog_logout_message)
+                .setPositiveButton(R.string.dialog_logout_positive, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         FirebaseAuth.getInstance().signOut();
@@ -227,10 +226,9 @@ public class MainActivity extends AppCompatActivity
                         finish();
                     }
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.dialog_logout_negative, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //do nothing
                     }
                 })
                 .setIcon(R.drawable.ic_account_box)
@@ -289,6 +287,7 @@ public class MainActivity extends AppCompatActivity
     public HashMap<String, Pin> getNearbyPins() {
         return nearbyPins;
     }
+
     public boolean isNearBy(MyLatLng currentLoc, MyLatLng pinLoc) {
         return currentLoc.getDistance(pinLoc) <= HUMAN_WALKABLE_DISTANCE;
     }
@@ -305,12 +304,12 @@ public class MainActivity extends AppCompatActivity
 
     public void getClosestPin(Location location) {
         Pin closestSoFar = new Pin(); // eventually will get assigned to some real pin
-        double distanceSoFar = HUMAN_WALKABLE_DISTANCE;
+        double distanceSoFar = Integer.MAX_VALUE;
         MyLatLng myLocation = new MyLatLng(location.getLatitude(), location.getLongitude());
-        for (Map.Entry<String, Pin> current : nearbyPins.entrySet()) {
+        for (Map.Entry<String, Pin> current : pinList.entrySet()) {
             Pin currentPin = current.getValue();
             double currentDistance = currentPin.getLatLng().getDistance(myLocation);
-            if(currentDistance < distanceSoFar) {
+            if (currentDistance < distanceSoFar) {
                 closestSoFar = currentPin;
                 distanceSoFar = currentDistance;
             }
@@ -320,8 +319,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLocationUpdated(Location location) {
-        Toast.makeText(this, "Getting list of pins based on new location", Toast.LENGTH_SHORT).show();
         findNearbyPins(location);
+        Toast.makeText(this, "nearby pins: " + nearbyPins.size(), Toast.LENGTH_SHORT).show();
         getClosestPin(location);
     }
 

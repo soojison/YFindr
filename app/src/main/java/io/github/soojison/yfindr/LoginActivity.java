@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                         user.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(
                                 getUsernameFromEmail(user.getEmail())).build());
                         // TODO: String extract
-                        Toast.makeText(LoginActivity.this, "Registration successful",
+                        Toast.makeText(LoginActivity.this, R.string.login_registration_successful,
                                 Toast.LENGTH_LONG).show();
                     } else {
                         try {
@@ -72,10 +72,8 @@ public class LoginActivity extends AppCompatActivity {
                         } catch (FirebaseAuthWeakPasswordException e) {
                             etPassword.setError(e.getLocalizedMessage());
                             etPassword.requestFocus();
-                        } catch(FirebaseAuthInvalidCredentialsException e) {
-                            etEmail.setError(e.getLocalizedMessage());
-                            etEmail.requestFocus();
-                        } catch(FirebaseAuthUserCollisionException e) {
+                        } catch(FirebaseAuthInvalidCredentialsException |
+                                FirebaseAuthUserCollisionException e) {
                             etEmail.setError(e.getLocalizedMessage());
                             etEmail.requestFocus();
                         } catch (Exception e) {
@@ -90,8 +88,6 @@ public class LoginActivity extends AppCompatActivity {
                     hideProgressDialog();
                     Toast.makeText(LoginActivity.this,
                             "Error: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                    // localized message translates if the phone is in a different language
-
                 }
             });
         }
@@ -114,7 +110,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 hideProgressDialog();
                 if(task.isSuccessful()) {
-                    // oncomplete doesn't mean it's successful, need to check if the request was successful
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 } else {
                     Toast.makeText(LoginActivity.this,
@@ -129,10 +124,10 @@ public class LoginActivity extends AppCompatActivity {
     private boolean isFormValid() {
         if(TextUtils.isEmpty(etEmail.getText().toString())) {
             //TODO: extract string
-            etEmail.setError("Email Must not be empty");
+            etEmail.setError(getString(R.string.login_error_email));
             return false;
         } else if(TextUtils.isEmpty(etPassword.getText().toString())) {
-            etPassword.setError("Password must not be empty");
+            etPassword.setError(getString(R.string.login_error_password));
             return false;
         } else {
             return true;
@@ -143,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
     private void showProgressDialog() {
         if(progressDialog == null) {
             progressDialog = new ProgressDialog(this);
-            progressDialog.setMessage("Wait for it...");
+            progressDialog.setMessage(getString(R.string.login_error_loading));
         }
         progressDialog.show();
     }

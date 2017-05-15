@@ -11,7 +11,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private static final long SPLASH_LENGTH = 3000;
+    private static final long SPLASH_LENGTH = 1500;
     public static final String KEY_FIRST_TIME = "KEY_FIRST_TIME";
 
 
@@ -30,9 +30,9 @@ public class SplashActivity extends AppCompatActivity {
                     startActivity(new Intent(SplashActivity.this, IntroActivity.class));
                 } else {
                     FirebaseAuth auth = FirebaseAuth.getInstance();
-                    if (auth.getCurrentUser() != null) {
+                    if (auth.getCurrentUser() != null) { // if user logged in
                         startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                    } else {
+                    } else { // if user not logged in
                         startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                     }
                 }
