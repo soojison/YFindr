@@ -1,5 +1,6 @@
 package io.github.soojison.yfindr;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
@@ -11,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -32,9 +34,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.ncapdevi.fragnav.FragNavController;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +42,6 @@ import java.util.Map;
 
 import io.github.soojison.yfindr.data.MyLatLng;
 import io.github.soojison.yfindr.data.Pin;
-import io.github.soojison.yfindr.eventbus.LocationEvent;
 import io.github.soojison.yfindr.fragment.MapFragment;
 import io.github.soojison.yfindr.fragment.RecyclerFragment;
 
@@ -54,6 +52,9 @@ public class MainActivity extends AppCompatActivity
 
     public static final String KEY_PIN = "pins";
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 202;
+
+    // 2.5km = 2500m radius
+    private static final int HUMAN_WALKABLE_DISTANCE = 2500;
 
     private FragNavController fragNavController;
     private final int TAB_FIRST = FragNavController.TAB1;
@@ -144,8 +145,6 @@ public class MainActivity extends AppCompatActivity
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.tab_map:
-                    fragNavController.pop();
-                    fragNavController.push(new MapFragment());
                     fragNavController.switchTab(TAB_FIRST);
                     if (searchButton != null) {
                         searchButton.setVisible(true);
@@ -158,12 +157,17 @@ public class MainActivity extends AppCompatActivity
                     }
                     return true;
                 case R.id.tab_emergency:
-                    Toast.makeText(MainActivity.this, "Navigating to the closest Wi-Fi", Toast.LENGTH_SHORT).show();
-                    Intent navigation = new Intent(Intent.ACTION_VIEW, Uri
-                            .parse("http://maps.google.com/maps?daddr="
-                                    + closestPin.getLatLng().getLatitude() + ","
-                                    + closestPin.getLatLng().getLongitude()));
-                    startActivity(navigation);
+                    if(closestPin == null || closestPin.getLatLng() == null) {
+                        Toast.makeText(MainActivity.this, "Current location info not availible yet", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "Navigating to the closest Wi-Fi", Toast.LENGTH_SHORT).show();
+                        Intent navigation = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(
+                                R.string.google_maps_query,
+                                closestPin.getLatLng().getLatitude(),
+                                closestPin.getLatLng().getLongitude()
+                        )));
+                        startActivity(navigation);
+                    }
             }
             return false;
         }
@@ -172,7 +176,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         searchButton = menu.findItem(R.id.action_search);
         return true;
@@ -182,15 +185,11 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_search) {
-            Toast.makeText(this, "SEARCH", Toast.LENGTH_SHORT).show();
             try {
-                Intent intent =
-                        new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+                Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
                                 .build(this);
                 startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
-            } catch (GooglePlayServicesRepairableException e) {
-                Log.i("TAG_SEARCH", e.getLocalizedMessage());
-            } catch (GooglePlayServicesNotAvailableException e) {
+            } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                 Log.i("TAG_SEARCH", e.getLocalizedMessage());
             }
             return true;
@@ -204,14 +203,38 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.nav_settings) {
-
+        if (id == R.id.nav_logout) {
+            showLogoutDialog();
         } else if (id == R.id.nav_about) {
-            // TODO:
+            // TODO: show about
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void showLogoutDialog() {
+        // TODO: Extract string
+        new AlertDialog.Builder(this).setTitle("Logout")
+                .setMessage("Are you sure?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        FirebaseAuth.getInstance().signOut();
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //do nothing
+                    }
+                })
+                .setIcon(R.drawable.ic_account_box)
+                .show();
     }
 
     @Override
@@ -241,7 +264,6 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            //FirebaseAuth.getInstance().signOut();
             super.onBackPressed();
         }
     }
@@ -268,8 +290,7 @@ public class MainActivity extends AppCompatActivity
         return nearbyPins;
     }
     public boolean isNearBy(MyLatLng currentLoc, MyLatLng pinLoc) {
-        // 2.5km = 2500m radius
-        return currentLoc.getDistance(pinLoc) <= 2500;
+        return currentLoc.getDistance(pinLoc) <= HUMAN_WALKABLE_DISTANCE;
     }
 
     public void findNearbyPins(Location location) {
@@ -284,7 +305,7 @@ public class MainActivity extends AppCompatActivity
 
     public void getClosestPin(Location location) {
         Pin closestSoFar = new Pin(); // eventually will get assigned to some real pin
-        double distanceSoFar = 2500;
+        double distanceSoFar = HUMAN_WALKABLE_DISTANCE;
         MyLatLng myLocation = new MyLatLng(location.getLatitude(), location.getLongitude());
         for (Map.Entry<String, Pin> current : nearbyPins.entrySet()) {
             Pin currentPin = current.getValue();
@@ -299,30 +320,20 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLocationUpdated(Location location) {
-        Toast.makeText(this, "Getting new list of positions", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Getting list of pins based on new location", Toast.LENGTH_SHORT).show();
         findNearbyPins(location);
         getClosestPin(location);
-        EventBus.getDefault().post(new LocationEvent(location));
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
-        EventBus.getDefault().unregister(this);
         super.onStop();
     }
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(LocationEvent event) {
-        // dummy for fragments
-    }
-
 }
 
 

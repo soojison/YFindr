@@ -32,8 +32,6 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,7 +41,6 @@ import io.github.soojison.yfindr.R;
 import io.github.soojison.yfindr.adapter.PinAdapter;
 import io.github.soojison.yfindr.data.MyLatLng;
 import io.github.soojison.yfindr.data.Pin;
-import io.github.soojison.yfindr.eventbus.LocationEvent;
 
 public class MapFragment extends SupportMapFragment
         implements OnMapReadyCallback,
@@ -136,7 +133,6 @@ public class MapFragment extends SupportMapFragment
 
     @Override
     public void onConnected(Bundle bundle) {
-        Toast.makeText(getContext(),"onConnected",Toast.LENGTH_SHORT).show();
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
         mLocationRequest = new LocationRequest();
@@ -163,10 +159,9 @@ public class MapFragment extends SupportMapFragment
     public void onLocationChanged(Location location) {
         mLastLocation = location;
         //move map camera
-        Toast.makeText(getContext(), "Got new location", Toast.LENGTH_SHORT).show();
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-        if (mListener != null) { // fragment - activity communication
+        if (mListener != null) { // for fragment - activity communication
             mListener.onLocationUpdated(location);
         }
     }
