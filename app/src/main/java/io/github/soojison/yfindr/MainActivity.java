@@ -322,6 +322,7 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(this, "Getting new list of positions", Toast.LENGTH_SHORT).show();
         findNearbyPins(location);
         getClosestPin(location);
+
     }
 }
 

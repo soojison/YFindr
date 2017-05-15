@@ -155,15 +155,10 @@ public class MapFragment extends SupportMapFragment
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation = location;
-        // TODO: Get rid of this
-        MyLatLng keletiPos = new MyLatLng(47.5003159,19.0818379);
-        MyLatLng curPos = new MyLatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-        Toast.makeText(getContext(), keletiPos.getDistance(curPos) +"m", Toast.LENGTH_SHORT).show();
-        //Place current location marker
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         //move map camera
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-        if (mListener != null) {
+        if (mListener != null) { // fragment - activity communication
             mListener.onLocationUpdated(location);
         }
     }
