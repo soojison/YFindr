@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity
     private final int TAB_FIRST = FragNavController.TAB1;
     private final int TAB_SECOND = FragNavController.TAB2;
 
-    public DatabaseReference dbRef;
+    private DatabaseReference dbRef;
     private MenuItem searchButton;
 
     private HashMap<String, Pin> pinList;
@@ -274,7 +274,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @NonNull
-    private NavigationView initializeNavDrawer(Toolbar toolbar) {
+    private void initializeNavDrawer(Toolbar toolbar) {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -287,7 +287,6 @@ public class MainActivity extends AppCompatActivity
         tvEmail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
         TextView tvUsername = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvUsername);
         tvUsername.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-        return navigationView;
     }
 
 
@@ -295,11 +294,11 @@ public class MainActivity extends AppCompatActivity
         return nearbyPins;
     }
 
-    public boolean isNearBy(MyLatLng currentLoc, MyLatLng pinLoc) {
+    private boolean isNearBy(MyLatLng currentLoc, MyLatLng pinLoc) {
         return currentLoc.getDistance(pinLoc) <= HUMAN_WALKABLE_DISTANCE;
     }
 
-    public void findNearbyPins(Location location) {
+    private void findNearbyPins(Location location) {
         nearbyPins.clear();
         for (Map.Entry<String, Pin> current : pinList.entrySet()) {
             if (isNearBy(new MyLatLng(location.getLatitude(), location.getLongitude()),
@@ -309,7 +308,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void getClosestPin(Location location) {
+    private void getClosestPin(Location location) {
         Pin closestSoFar = new Pin(); // eventually will get assigned to some real pin
         double distanceSoFar = Integer.MAX_VALUE;
         MyLatLng myLocation = new MyLatLng(location.getLatitude(), location.getLongitude());
@@ -328,16 +327,6 @@ public class MainActivity extends AppCompatActivity
     public void onLocationUpdated(Location location) {
         findNearbyPins(location);
         getClosestPin(location);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
     }
 }
 

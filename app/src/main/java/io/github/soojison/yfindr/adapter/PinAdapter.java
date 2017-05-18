@@ -53,7 +53,7 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder> {
         final Pin newPin = pinList.get(position);
         holder.tvNetworkName.setText(newPin.getNetworkName());
         holder.tvAddress.setText(newPin.getAddress());
-        holder.tvReview.setText(newPin.getRating() + "/5.0");
+        holder.tvReview.setText(context.getResources().getString(R.string.rating, newPin.getRating()));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

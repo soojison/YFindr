@@ -32,8 +32,8 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.etPassword)
     TextInputEditText etPassword;
 
-    ProgressDialog progressDialog;
-    FirebaseAuth firebaseAuth;
+    private ProgressDialog progressDialog;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +107,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 hideProgressDialog();
                 if(task.isSuccessful()) {
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
                 } else {
                     Toast.makeText(LoginActivity.this,
                             "Failed: " + task.getException().getLocalizedMessage(),
@@ -120,7 +122,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isFormValid() {
         if(TextUtils.isEmpty(etEmail.getText().toString())) {
-            etEmail.setError(getString(R.string.login_error_email));
+            etEmail.setError(getString(R.string.error_invalid_email));
             return false;
         } else if(TextUtils.isEmpty(etPassword.getText().toString())) {
             etPassword.setError(getString(R.string.login_error_password));

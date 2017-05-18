@@ -9,19 +9,15 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
 import butterknife.BindView;
@@ -33,7 +29,7 @@ import xyz.hanks.library.SmallBangListener;
 
 public class AddActivity extends AppCompatActivity {
 
-    public static final int PLACE_PICKER_REQUEST = 1;
+    private static final int PLACE_PICKER_REQUEST = 1;
 
     @BindView(R.id.etNetworkName)
     EditText etNetworkName;
@@ -131,7 +127,7 @@ public class AddActivity extends AppCompatActivity {
         });
     }
 
-    public void addPin() {
+    private void addPin() {
         String key = FirebaseDatabase.getInstance().getReference().
                 child(MainActivity.KEY_PIN).push().getKey();
         Pin newPin = new Pin(
@@ -154,7 +150,7 @@ public class AddActivity extends AppCompatActivity {
         return true;
     }
 
-    public boolean isValidPin() {
+    private boolean isValidPin() {
         if(TextUtils.isEmpty(etNetworkName.getText().toString())) {
             etNetworkName.requestFocus();
             etNetworkName.setError(getString(R.string.network_name_invalid));

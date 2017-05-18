@@ -12,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class SplashActivity extends AppCompatActivity {
 
     private static final long SPLASH_LENGTH = 1500;
-    public static final String KEY_FIRST_TIME = "KEY_FIRST_TIME";
+    private static final String KEY_FIRST_TIME = "KEY_FIRST_TIME";
 
 
     @Override

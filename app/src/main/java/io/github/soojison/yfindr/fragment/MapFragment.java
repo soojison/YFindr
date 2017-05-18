@@ -256,7 +256,7 @@ public class MapFragment extends SupportMapFragment
     }
 
 
-    public MarkerOptions createMarkerOptions(Pin pin) {
+    private MarkerOptions createMarkerOptions(Pin pin) {
         MyLatLng latLng = pin.getLatLng();
         MarkerOptions ret = new MarkerOptions()
                 .position(new LatLng(latLng.getLatitude(), latLng.getLongitude()))
@@ -328,7 +328,7 @@ public class MapFragment extends SupportMapFragment
     }
 
     public interface OnLocationUpdatedListener {
-        public void onLocationUpdated(Location location);
+        void onLocationUpdated(Location location);
     }
 
 }

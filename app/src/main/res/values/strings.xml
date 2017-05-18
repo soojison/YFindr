@@ -38,7 +38,6 @@
     <string name="intro_hand_desc">Would you like to join us?</string>
     <string name="intro_permissions_button">Grant Permissions</string>
     <string name="login_registration_successful">Registration successful</string>
-    <string name="login_error_email">Email Must not be empty</string>
     <string name="login_error_password">Password must not be empty</string>
     <string name="login_error_loading">Authenticating...</string>
     <string name="main_emergency_toast">Navigating to the closest Wi-Fi</string>
@@ -59,5 +58,7 @@
         For a world where you can find free Wi-Fi no matter where you go. YFindr 2017.
     </string>
     <string name="dialog_report_title">Report</string>
-    <string name="dialog_report_message">Report only when the the pin\'s information wrong. Are you sure?</string>
+    <string name="dialog_report_message">Report only when the pin\'s information wrong. Are you sure?</string>
+
+    <string name="rating">%1$f/5.0</string>
 </resources>

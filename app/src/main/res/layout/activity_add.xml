@@ -37,6 +37,13 @@
         android:focusableInTouchMode="false"/>
     </android.support.design.widget.TextInputLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rating"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="16dp"
+        android:textColor="@color/colorAccent" />
     <RatingBar
         android:id="@+id/ratingBar"
         android:layout_width="wrap_content"
