@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -270,7 +271,8 @@ public class MapFragment extends SupportMapFragment
     }
 
     private void initPinListener() {
-        ((MainActivity) getActivity()).dbRef.addChildEventListener(new ChildEventListener() {
+        FirebaseDatabase.getInstance().getReference().child(MainActivity.KEY_PIN)
+                .addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Pin newPin = dataSnapshot.getValue(Pin.class);
@@ -298,7 +300,7 @@ public class MapFragment extends SupportMapFragment
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Pin deletePin = dataSnapshot.getValue(Pin.class);
+                Pin deletePin = dataSnapshot.getValue(Pin.class );
                 for (Map.Entry<Marker, Pin> markerPinEntry : markerMap.entrySet()) {
                     if (markerPinEntry.getValue().equals(deletePin)) {
                         Marker deleteMarker = markerPinEntry.getKey();
