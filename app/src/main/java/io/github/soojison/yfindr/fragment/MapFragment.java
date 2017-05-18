@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -280,7 +281,19 @@ public class MapFragment extends SupportMapFragment
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                //TODO
+                Pin changedPin = dataSnapshot.getValue(Pin.class);
+                Log.i("TAG_CHANGED", changedPin.getNetworkName());
+                for (Map.Entry<Marker, Pin> markerPinEntry : markerMap.entrySet()) {
+                    if (markerPinEntry.getValue().equals(changedPin)) {
+                        Marker deleteMarker = markerPinEntry.getKey();
+                        deleteMarker.remove();
+
+                        MarkerOptions options = createMarkerOptions(changedPin);
+                        Marker newMarker = mGoogleMap.addMarker(options);
+                        markerMap.put(newMarker, changedPin);
+                        break;
+                    }
+                }
             }
 
             @Override

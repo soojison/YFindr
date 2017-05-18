@@ -43,4 +43,14 @@ public class MyLatLng {
         return (distance * meterConversion);
 
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;   //If objects equal, is OK
+        if (o instanceof MyLatLng) {
+            MyLatLng that = (MyLatLng) o;
+            return (this.latitude.equals(that.latitude)  && this.longitude.equals(that.longitude));
+        }
+        return false;
+    }
 }

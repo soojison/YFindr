@@ -48,7 +48,6 @@ import io.github.soojison.yfindr.fragment.RecyclerFragment;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MapFragment.OnLocationUpdatedListener {
 
-    // TODO: Cache data so when the user has no internet connection they can use this app... like smh that's the whole purpose
     public static final String KEY_PIN = "pins";
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 202;
 
@@ -77,16 +76,20 @@ public class MainActivity extends AppCompatActivity
         initializeFragmentSwitcher();
         dbRef = FirebaseDatabase.getInstance().getReference(KEY_PIN);
         pinList = new HashMap<>();
+        nearbyPins = new HashMap<>();
         initPinListener();
     }
 
 
     private void initPinListener() {
+        // not realtime enough for the recycler... but will do since people aren't interested in
+        // getting the new locations right away in this situation
         dbRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Pin newPin = dataSnapshot.getValue(Pin.class);
                 pinList.put(dataSnapshot.getKey(), newPin);
+                getNearbyPins();
             }
 
             @Override
@@ -94,12 +97,18 @@ public class MainActivity extends AppCompatActivity
                 Pin updatedPin = dataSnapshot.getValue(Pin.class);
                 pinList.remove(dataSnapshot.getKey());
                 pinList.put(dataSnapshot.getKey(), updatedPin);
+                if(nearbyPins.containsKey(dataSnapshot.getKey())) {
+                    nearbyPins.remove(dataSnapshot.getKey());
+                    nearbyPins.put(dataSnapshot.getKey(), updatedPin);
+                }
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 pinList.remove(dataSnapshot.getKey());
-                //pinAdapter.removePinByKey(dataSnapshot.getKey());
+                if(nearbyPins.containsKey(dataSnapshot.getKey())) {
+                    nearbyPins.remove(dataSnapshot.getKey());
+                }
             }
 
             @Override
@@ -198,7 +207,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -292,7 +300,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void findNearbyPins(Location location) {
-        nearbyPins = new HashMap<>();
+        nearbyPins.clear();
         for (Map.Entry<String, Pin> current : pinList.entrySet()) {
             if (isNearBy(new MyLatLng(location.getLatitude(), location.getLongitude()),
                     current.getValue().getLatLng())) {

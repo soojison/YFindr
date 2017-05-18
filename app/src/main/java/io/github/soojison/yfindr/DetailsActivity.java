@@ -1,10 +1,13 @@
 package io.github.soojison.yfindr;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -16,6 +19,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,31 +50,10 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
+
         if(getIntent().hasExtra(PIN_DETAIL_TAG)) {
             final Pin myPin = getIntent().getParcelableExtra(PIN_DETAIL_TAG);
-            name.setText(myPin.getNetworkName());
-            address.setText(myPin.getAddress());
-            String lockedStatus = myPin.isLocked() ? getString(R.string.detail_requires_key) : getString(R.string.detail_unlocked_access);
-            tvReqKey.setText(lockedStatus);
-            position = new LatLng(myPin.getLatLng().getLatitude(), myPin.getLatLng().getLongitude());
-            btnNavigate.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent navigation = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(
-                            R.string.google_maps_query,
-                            position.latitude,
-                            position.longitude
-                    )));
-                    startActivity(navigation);
-                }
-            });
-            btnReport.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // TODO: Collect user reports?
-                    Toast.makeText(DetailsActivity.this, "TODO: How to report faulty pins?", Toast.LENGTH_SHORT).show();
-                }
-            });
+            populateActivity(myPin);
         }
         initializeToolbar();
 
@@ -86,6 +70,31 @@ public class DetailsActivity extends AppCompatActivity {
 
     }
 
+    private void populateActivity(final Pin myPin) {
+        name.setText(myPin.getNetworkName());
+        address.setText(myPin.getAddress());
+        String lockedStatus = myPin.isLocked() ? getString(R.string.detail_requires_key) : getString(R.string.detail_unlocked_access);
+        tvReqKey.setText(lockedStatus);
+        position = new LatLng(myPin.getLatLng().getLatitude(), myPin.getLatLng().getLongitude());
+        btnNavigate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent navigation = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(
+                        R.string.google_maps_query,
+                        position.latitude,
+                        position.longitude
+                )));
+                startActivity(navigation);
+            }
+        });
+        btnReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showReportDialog(myPin);
+            }
+        });
+    }
+
     private void initializeToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -99,5 +108,30 @@ public class DetailsActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+    }
+
+    private void showReportDialog(final Pin myPin) {
+        new AlertDialog.Builder(this).setTitle(R.string.dialog_report_title)
+                .setMessage(R.string.dialog_report_message)
+                .setPositiveButton(R.string.dialog_logout_positive, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        myPin.incrementNumReport();
+                        if(myPin.getNumReports() > 100) { // more than hundred people complained!!
+                            FirebaseDatabase.getInstance().getReference().child(MainActivity.KEY_PIN).child(myPin.getUid()).removeValue();
+                            finish();
+                        } else {
+                            FirebaseDatabase.getInstance().getReference().
+                                    child(MainActivity.KEY_PIN).child(myPin.getUid()).setValue(myPin);
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.dialog_logout_negative, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .setIcon(R.drawable.ic_error)
+                .show();
     }
 }

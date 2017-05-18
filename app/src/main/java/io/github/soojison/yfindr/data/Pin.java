@@ -12,6 +12,7 @@ public class Pin implements Parcelable {
     private double rating;
     private MyLatLng latLng;
     private boolean locked;
+    private int numReports;
 
     public Pin() {
 
@@ -24,6 +25,7 @@ public class Pin implements Parcelable {
         this.latLng = latLng;
         this.locked = locked;
         this.rating = rating;
+        this.numReports = 0;
     }
 
     public Pin(Parcel in){
@@ -32,6 +34,7 @@ public class Pin implements Parcelable {
         latLng = new MyLatLng(in.readDouble(), in.readDouble());
         locked = (in.readInt() == 1);
         uid = in.readString();
+        numReports = in.readInt();
     }
 
     public String getNetworkName() {
@@ -82,6 +85,18 @@ public class Pin implements Parcelable {
         this.locked = locked;
     }
 
+    public int getNumReports() {
+        return numReports;
+    }
+
+    public void setNumReports(int numReports) {
+        this.numReports = numReports;
+    }
+
+    public void incrementNumReport() {
+        this.numReports += 1;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -95,6 +110,7 @@ public class Pin implements Parcelable {
         dest.writeDouble(latLng.getLongitude());
         dest.writeInt(locked ? 1 : 0);
         dest.writeString(uid);
+        dest.writeInt(numReports);
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
@@ -106,4 +122,15 @@ public class Pin implements Parcelable {
             return new Pin[size];
         }
     };
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == this) return true;
+        if(obj instanceof Pin) {
+            Pin that = (Pin) obj;
+            return (this.uid.equals(that.uid) &&
+                    this.latLng.equals(that.latLng));
+        }
+        return false;
+    }
 }

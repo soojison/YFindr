@@ -137,7 +137,7 @@ public class AddActivity extends AppCompatActivity {
         Pin newPin = new Pin(
                 etNetworkName.getText().toString(),
                 etAddress.getText().toString(),
-                FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                key,
                 new MyLatLng(place.getLatLng().latitude, place.getLatLng().longitude),
                 selected,
                 ratingBar.getRating()

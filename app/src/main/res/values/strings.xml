@@ -58,4 +58,6 @@
         Special thanks to professor Péter Ekler for a very understandable course as well as being very helpful!\n\n
         For a world where you can find free Wi-Fi no matter where you go. YFindr 2017.
     </string>
+    <string name="dialog_report_title">Report</string>
+    <string name="dialog_report_message">Report only when the the pin\'s information wrong. Are you sure?</string>
 </resources>

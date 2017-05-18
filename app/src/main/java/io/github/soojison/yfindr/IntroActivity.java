@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
+import com.google.firebase.database.FirebaseDatabase;
+
 import agency.tango.materialintroscreen.MaterialIntroActivity;
 import agency.tango.materialintroscreen.MessageButtonBehaviour;
 import agency.tango.materialintroscreen.SlideFragmentBuilder;
@@ -63,6 +65,7 @@ public class IntroActivity extends MaterialIntroActivity {
     public void onFinish() {
         startActivity(new Intent(IntroActivity.this, LoginActivity.class));
         overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         super.onFinish();
     }
 }
