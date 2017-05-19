@@ -33,48 +33,24 @@ public class Pin {
         return networkName;
     }
 
-    public void setNetworkName(String networkName) {
-        this.networkName = networkName;
-    }
-
     public String getAddress() {
         return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public String getUid() {
         return uid;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
     public MyLatLng getLatLng() {
         return latLng;
-    }
-
-    public void setLatLng(MyLatLng latLng) {
-        this.latLng = latLng;
     }
 
     public boolean isLocked() {
         return locked;
     }
 
-    public void setLocked(boolean locked) {
-        this.locked = locked;
-    }
-
     public int getNumReports() {
         return numReports;
-    }
-
-    public void setNumReports(int numReports) {
-        this.numReports = numReports;
     }
 
     public void incrementNumReport() {
@@ -95,7 +71,7 @@ public class Pin {
         for (Double rating : ratingList.values()) {
             sum += rating;
         }
-        return sum;
+        return sum/ratingList.size();
     }
 
     public void deleteRating(String uid) {

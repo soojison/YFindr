@@ -1,5 +1,6 @@
 package io.github.soojison.yfindr;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -7,16 +8,24 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.github.johnpersano.supertoasts.library.Style;
+import com.github.johnpersano.supertoasts.library.SuperActivityToast;
+import com.github.johnpersano.supertoasts.library.SuperToast;
+import com.github.johnpersano.supertoasts.library.utils.PaletteUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
 import org.parceler.Parcels;
@@ -40,10 +49,14 @@ public class DetailsActivity extends AppCompatActivity {
     @BindView(R.id.btnNavigate)
     Button btnNavigate;
 
-    @BindView(R.id.btnReport)
-    Button btnReport;
+    @BindView(R.id.btnRate)
+    Button btnRate;
 
     private LatLng position;
+    private Pin thePin;
+    private float rating;
+    private Dialog rankDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,8 +64,8 @@ public class DetailsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         if(getIntent().hasExtra(PIN_DETAIL_TAG)) {
-            final Pin myPin = Parcels.unwrap(getIntent().getParcelableExtra(PIN_DETAIL_TAG));
-            populateActivity(myPin);
+            thePin = Parcels.unwrap(getIntent().getParcelableExtra(PIN_DETAIL_TAG));
+            populateActivity(thePin);
         }
         initializeToolbar();
 
@@ -86,12 +99,65 @@ public class DetailsActivity extends AppCompatActivity {
                 startActivity(navigation);
             }
         });
-        btnReport.setOnClickListener(new View.OnClickListener() {
+        btnRate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showReportDialog(myPin);
+                showRatingDialog();
             }
         });
+    }
+
+
+
+    private void showRatingDialog() {
+        rankDialog = new Dialog(DetailsActivity.this, R.style.FullHeightDialog);
+        rankDialog.setContentView(R.layout.dialog_rate);
+        rankDialog.setCancelable(true);
+        final RatingBar ratingBar = (RatingBar)rankDialog.findViewById(R.id.dialog_ratingbar);
+
+        TextView text = (TextView) rankDialog.findViewById(R.id.rank_dialog_text1);
+        text.setText(getResources().getString(R.string.review_dialog_name,
+                FirebaseAuth.getInstance().getCurrentUser().getDisplayName()));
+
+        Button updateButton = (Button) rankDialog.findViewById(R.id.rank_dialog_button);
+        updateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rating = ratingBar.getRating();
+                if(thePin.addRating(FirebaseAuth.getInstance().getCurrentUser().getUid(), rating)) {
+                    FirebaseDatabase.getInstance().getReference().
+                            child(MainActivity.KEY_PIN).child(thePin.getUid()).setValue(thePin);
+                    SuperActivityToast.create(DetailsActivity.this, new Style(),
+                            Style.TYPE_STANDARD)
+                            .setText(getString(R.string.rating_dialog_added_success))
+                            .setColor(PaletteUtils.getSolidColor(PaletteUtils.MATERIAL_GREEN))
+                            .setAnimations(Style.ANIMATIONS_POP).show();
+                } else {
+                    SuperActivityToast.create(DetailsActivity.this, new Style(),
+                            Style.TYPE_STANDARD)
+                            .setText(getString(R.string.rating_dialog_added_failure))
+                            .setColor(PaletteUtils.getSolidColor(PaletteUtils.MATERIAL_RED))
+                            .setAnimations(Style.ANIMATIONS_POP).show();
+                }
+                rankDialog.dismiss();
+            }
+        });
+        rankDialog.show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.details, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_report) {
+            showReportDialog(thePin);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void initializeToolbar() {

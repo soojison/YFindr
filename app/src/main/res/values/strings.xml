@@ -60,5 +60,11 @@
     <string name="dialog_report_title">Report</string>
     <string name="dialog_report_message">Report only when the pin\'s information wrong. Are you sure?</string>
 
-    <string name="rating">%1$f/5.0</string>
+    <string name="rating">%1$.1f/5.0</string>
+
+    <string name="review_dialog_name">Leaving review as %1$s</string>
+    <string name="dialog_rating_button_text">Leave Review</string>
+    <string name="rating_dialog_added_success">Rating added</string>
+    <string name="rating_dialog_added_failure">You already left a review</string>
+    <string name="emergency_not_available">Current location info not available yet</string>
 </resources>

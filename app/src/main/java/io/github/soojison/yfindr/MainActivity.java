@@ -21,6 +21,9 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.johnpersano.supertoasts.library.Style;
+import com.github.johnpersano.supertoasts.library.SuperActivityToast;
+import com.github.johnpersano.supertoasts.library.utils.PaletteUtils;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
@@ -166,7 +169,11 @@ public class MainActivity extends AppCompatActivity
                     return true;
                 case R.id.tab_emergency:
                     if (closestPin == null || closestPin.getLatLng() == null) {
-                        Toast.makeText(MainActivity.this, "Current location info not availible yet", Toast.LENGTH_SHORT).show();
+                        SuperActivityToast.create(MainActivity.this, new Style(),
+                                Style.TYPE_STANDARD)
+                                .setText(getString(R.string.emergency_not_available))
+                                .setColor(PaletteUtils.getSolidColor(PaletteUtils.MATERIAL_RED))
+                                .setAnimations(Style.ANIMATIONS_POP).show();
                     } else {
                         Toast.makeText(MainActivity.this, R.string.main_emergency_toast, Toast.LENGTH_SHORT).show();
                         Intent navigation = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(
