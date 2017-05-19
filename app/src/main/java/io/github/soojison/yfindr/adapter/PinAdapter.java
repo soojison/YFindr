@@ -3,7 +3,11 @@ package io.github.soojison.yfindr.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +15,8 @@ import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,12 +59,13 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder> {
         final Pin newPin = pinList.get(position);
         holder.tvNetworkName.setText(newPin.getNetworkName());
         holder.tvAddress.setText(newPin.getAddress());
-        holder.tvReview.setText(context.getResources().getString(R.string.rating, newPin.getRating()));
+        holder.tvReview.setText(context.getResources().getString(R.string.rating, newPin.getTotalRating()));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Parcelable wrapped = Parcels.wrap(newPin);
                 context.startActivity(new Intent(context, DetailsActivity.class)
-                        .putExtra(DetailsActivity.PIN_DETAIL_TAG, newPin));
+                        .putExtra(DetailsActivity.PIN_DETAIL_TAG, wrapped));
             }
         });
     }

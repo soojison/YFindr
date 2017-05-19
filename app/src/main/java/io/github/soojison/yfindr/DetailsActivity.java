@@ -19,6 +19,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.parceler.Parcels;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.soojison.yfindr.data.Pin;
@@ -49,7 +51,7 @@ public class DetailsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         if(getIntent().hasExtra(PIN_DETAIL_TAG)) {
-            final Pin myPin = getIntent().getParcelableExtra(PIN_DETAIL_TAG);
+            final Pin myPin = Parcels.unwrap(getIntent().getParcelableExtra(PIN_DETAIL_TAG));
             populateActivity(myPin);
         }
         initializeToolbar();

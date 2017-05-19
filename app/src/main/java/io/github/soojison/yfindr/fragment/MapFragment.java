@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -32,6 +33,8 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+
+import org.parceler.Parcels;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -102,8 +105,9 @@ public class MapFragment extends SupportMapFragment
             @Override
             public void onInfoWindowClick(Marker marker) {
                 mGoogleMap.getUiSettings().setMapToolbarEnabled(true);
+                Parcelable wrapped = Parcels.wrap(markerMap.get(marker));
                 getContext().startActivity(new Intent(getContext(), DetailsActivity.class)
-                        .putExtra(DetailsActivity.PIN_DETAIL_TAG, markerMap.get(marker)));
+                        .putExtra(DetailsActivity.PIN_DETAIL_TAG, wrapped));
             }
         });
 

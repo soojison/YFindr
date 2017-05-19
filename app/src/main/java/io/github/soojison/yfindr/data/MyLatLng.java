@@ -1,9 +1,12 @@
 package io.github.soojison.yfindr.data;
 
+import org.parceler.Parcel;
+
+@Parcel
 public class MyLatLng {
 
-    private Double latitude;
-    private Double longitude;
+    Double latitude;
+    Double longitude;
 
     public MyLatLng() {
 

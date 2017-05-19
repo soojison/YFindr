@@ -1,40 +1,32 @@
 package io.github.soojison.yfindr.data;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import org.parceler.Parcel;
 
+import java.util.HashMap;
 
-public class Pin implements Parcelable {
+@Parcel
+public class Pin {
 
-    private String networkName;
-    private String address;
-    private String uid;
-    private double rating;
-    private MyLatLng latLng;
-    private boolean locked;
-    private int numReports;
+    String networkName;
+    String address;
+    String uid;
+    MyLatLng latLng;
+    boolean locked;
+    int numReports;
+    HashMap<String, Double> ratingList;
 
     public Pin() {
 
     }
 
-    public Pin(String networkName, String address, String uid, MyLatLng latLng, boolean locked, double rating) {
+    public Pin(String networkName, String address, String uid, MyLatLng latLng, boolean locked) {
         this.networkName = networkName;
         this.address = address;
         this.uid = uid;
         this.latLng = latLng;
         this.locked = locked;
-        this.rating = rating;
         this.numReports = 0;
-    }
-
-    public Pin(Parcel in){
-        networkName = in.readString();
-        address = in.readString();
-        latLng = new MyLatLng(in.readDouble(), in.readDouble());
-        locked = (in.readInt() == 1);
-        uid = in.readString();
-        numReports = in.readInt();
+        this.ratingList = new HashMap<>();
     }
 
     public String getNetworkName() {
@@ -59,14 +51,6 @@ public class Pin implements Parcelable {
 
     public void setUid(String uid) {
         this.uid = uid;
-    }
-
-    public double getRating() {
-        return rating;
-    }
-
-    public void setRating(double rating) {
-        this.rating = rating;
     }
 
     public MyLatLng getLatLng() {
@@ -97,31 +81,26 @@ public class Pin implements Parcelable {
         this.numReports += 1;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public boolean addRating(String uid, double rating) {
+        if(ratingList.containsKey(uid)) {
+            return false;
+        } else {
+            ratingList.put(uid, rating);
+            return true;
+        }
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.networkName);
-        dest.writeString(this.address);
-        dest.writeDouble(latLng.getLatitude());
-        dest.writeDouble(latLng.getLongitude());
-        dest.writeInt(locked ? 1 : 0);
-        dest.writeString(uid);
-        dest.writeInt(numReports);
+    public double getTotalRating() {
+        double sum = 0;
+        for (Double rating : ratingList.values()) {
+            sum += rating;
+        }
+        return sum;
     }
 
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public Pin createFromParcel(Parcel in) {
-            return new Pin(in);
-        }
-
-        public Pin[] newArray(int size) {
-            return new Pin[size];
-        }
-    };
+    public void deleteRating(String uid) {
+        ratingList.remove(uid);
+    }
 
     @Override
     public boolean equals(Object obj) {

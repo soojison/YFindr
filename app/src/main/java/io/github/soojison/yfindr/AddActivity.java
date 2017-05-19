@@ -18,6 +18,7 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
 import butterknife.BindView;
@@ -135,9 +136,11 @@ public class AddActivity extends AppCompatActivity {
                 etAddress.getText().toString(),
                 key,
                 new MyLatLng(place.getLatLng().latitude, place.getLatLng().longitude),
-                selected,
-                ratingBar.getRating()
+                selected
         );
+
+        newPin.addRating(FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                ratingBar.getRating());
 
         FirebaseDatabase.getInstance().getReference().
                 child(MainActivity.KEY_PIN).child(key).setValue(newPin);
