@@ -27,7 +27,7 @@ database based on your current location. It might not be a walkable distance,
 since you are not within 2.5km away from the closest pin. However, it gives you
 the closest one out of all the possibilities around the globe.
 
-## Details Screen
+### Details Screen
 Here you can see further details about the location, and you can leave a review
 of the pin. You can only leave one review though! In the details screen, you should be able to see a "report" button in case the
 
