@@ -39,7 +39,7 @@
     <string name="intro_permissions_button">Grant Permissions</string>
     <string name="login_registration_successful">Registration successful</string>
     <string name="login_error_password">Password must not be empty</string>
-    <string name="login_error_loading">Authenticating...</string>
+    <string name="login_error_loading">Authenticating…</string>
     <string name="main_emergency_toast">Navigating to the closest Wi-Fi</string>
     <string name="dialog_logout_title">Logging out</string>
     <string name="dialog_logout_message">Are you sure?</string>

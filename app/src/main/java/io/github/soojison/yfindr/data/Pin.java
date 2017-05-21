@@ -7,6 +7,7 @@ import java.util.HashMap;
 @Parcel
 public class Pin {
 
+    // no modifier because of @Parcel notation
     String networkName;
     String address;
     String uid;

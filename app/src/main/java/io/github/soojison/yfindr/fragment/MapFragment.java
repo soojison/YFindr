@@ -100,7 +100,6 @@ public class MapFragment extends SupportMapFragment
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
-
         mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
@@ -293,7 +292,6 @@ public class MapFragment extends SupportMapFragment
                     if (markerPinEntry.getValue().equals(changedPin)) {
                         Marker deleteMarker = markerPinEntry.getKey();
                         deleteMarker.remove();
-
                         MarkerOptions options = createMarkerOptions(changedPin);
                         Marker newMarker = mGoogleMap.addMarker(options);
                         markerMap.put(newMarker, changedPin);

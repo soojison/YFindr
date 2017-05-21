@@ -5,6 +5,7 @@ import org.parceler.Parcel;
 @Parcel
 public class MyLatLng {
 
+    // no modifier because of @Parcel notation
     Double latitude;
     Double longitude;
 
