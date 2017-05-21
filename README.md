@@ -29,13 +29,12 @@ the closest one out of all the possibilities around the globe.
 
 ### Details Screen
 Here you can see further details about the location, and you can leave a review
-of the pin. You can only leave one review though! In the details screen, you should be able to see a "report" button in case the
+of the pin. You can only leave one review though!
 
 In the navigation bar menu, you should be able to see a "report" button in case the
 information is faulty - i.e. the wifi does not exist anymore or it is a personal
 network in someone's home. Then, you can report it, and if there are more than 
 100 reports, the pin will get deleted from the database.
-
 
 ## Functions
 The database will cache the last fetched data, so even if you lose network
